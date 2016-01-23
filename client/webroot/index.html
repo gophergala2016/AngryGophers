@@ -1,0 +1,581 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>AngryGophers TANK</title>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+          type="text/javascript"></script>
+</head>
+<body>
+  <section>
+    <div id="newSession">
+      Podaj nick czopku: <input id="nickName" name="nick">
+      <button id="submitNick">
+        Send
+      </button>
+    </div>
+    <div id="score" style="float:right;font-weight:bold;font-size:105px;text-align:center;width:40%;display:none;"></div>
+    <div>
+      <canvas id="canvas" style="display:none;" width="800" height="800">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
+    </div>
+
+    <script type="text/javascript">
+      var keySpacePressed = false;
+      var keyUpPressed = false;
+      var keyDownPressed = false;
+      var keyLeftPressed = false;
+      var keyRightPressed = false;
+
+      var websocket = new WebSocket("ws://localhost:8080/echo");
+
+      function doKeyDown(evt) {
+        switch (evt.keyCode) {
+          case 32:
+            if (!keySpacePressed) {
+              // pressed.push("fire");
+              keySpacePressed = true;
+              // websocketAction("fire");
+              websocketAction('fire');
+            }
+            break;
+          case 38:
+            if (!keyUpPressed) {
+              keyUpPressed = true;
+              websocketAction("up");
+            }
+          break;
+          case 40:  /* Down arrow */
+            if (!keyDownPressed) {
+              keyDownPressed = true;
+              websocketAction("down");
+            }
+          break;
+          case 37:  /* Left arrow was pressed */
+            if (!keyLeftPressed) {
+              keyLeftPressed = true;
+              websocketAction("left");
+            }
+          break;
+          case 39:  /* Right arrow was pressed */
+            if (!keyRightPressed) {
+              keyRightPressed = true;
+              websocketAction("right");
+            }
+          break;
+        }
+      }
+
+      function doKeyUp(evt) {
+        var direction;
+        switch (evt.keyCode) {
+          case 32:
+            if (keySpacePressed) {
+              // direction = "fire2";
+              websocketAction('fire2');
+              // removePressed('fire');
+              keySpacePressed = false;
+            }
+          break;
+          case 38:
+            if (keyUpPressed) {
+              websocketAction('up2');
+              keyUpPressed = false;
+            }
+          break;
+          case 40:  /* Down arrow was pressed */
+            if (keyDownPressed) {
+              websocketAction('down2');
+              keyDownPressed = false;
+            }
+          break;
+          case 37:  /* Left arrow was pressed */
+            if (keyLeftPressed) {
+              websocketAction('left2');
+              keyLeftPressed = false;
+            }
+          break;
+          case 39:  /* Right arrow was pressed */
+            if (keyRightPressed) {
+              websocketAction('right2');
+              keyRightPressed = false;
+            }
+          break;
+        }
+      }
+
+      window.addEventListener('keydown',doKeyDown, true);
+      window.addEventListener('keyup', doKeyUp, true);
+
+      $(function() {
+        $("#submitNick").click(function() {
+          websocketAction("login;" + $('#nickName').val());
+          $('#newSession').hide();
+          $('#score').show();
+          $('#canvas').show();
+        });
+      });
+
+      </script>
+
+
+
+    <script type="text/javascript">
+    var canvas;
+    var ctx;
+    var dx = 5;
+    var dy = 5;
+    var tankWidth = 37;
+    var tankHeight = 35;
+    var bulletWidth = 6;
+    var bulletHeight = 14;
+
+    var x = 0;
+    var y = 0;
+    var users = [];
+    var bullets = [];
+    var WIDTH = 800;
+    var HEIGHT = 800;
+    var bulletSpeed = 6;
+    var refreshrate = 30;
+    var scores = false;
+  
+    var envWidth = 256;
+    var envHeight = 256;
+
+
+    var TO_RADIANS = Math.PI / 180;
+    
+    var tanksPath = "./resources/Tanks/";
+    var tanksList = ["tankBlack.png", "tankBlue.png", "tankGreen.png", "tankRed.png"];
+    var barrelList = ["barrelBlack.png", "barrelBlue.png", "barrelGreen.png", "barrelRed.png"];
+    
+    var bulletPath = "./resources/Bullets/";
+    var bulletList = ["bulletBeige.png"];
+  
+    var envPath = "./resources/Environment/";
+    var envGroundList = ["dirt.png", "sand.png", "grass.png", "waterShallow.png", "waterDeep.png"];
+    var envObstacleList = ["treeLarge.png", "treeSmall.png"];
+    var envMap = [];
+
+    var tanksImages = [];
+    var barrelImages = [];
+    var bulletImages = [];
+    var envImages = [];
+  
+    var pressed = [];
+
+    var smokeImage = new Image();
+    var smokeList = [];
+    
+    var lastPressed = "u";
+    // var websocket = new WebSocket("ws://localhost:8080/entry");
+
+    var soundExplosion = new Audio("./resources/Sounds/explosion.mp3");
+
+    var treeImage = new Image();
+    var treeList = [];
+
+    var rockImage = new Image();
+    var rockList = [];
+
+     websocket.onmessage = function(str) {
+        // console.log(str.data);
+        datalist = str.data.split("\n");
+        console.log(datalist);
+        // x = 10;
+        // y = 10;
+        users = [];
+        bullets = [];
+        scores = false;
+        for (k in datalist) {
+          parseLine(datalist[k]);
+        }
+      };
+
+      function parseLine(line){
+        if (line != '')
+        {
+          data = line.split(';');
+          switch (data[0])
+          {
+            case 'T':
+              users[data[1]] = {
+                posX: parseFloat(data[3]), 
+                posY: parseFloat(data[4]), 
+                speed: parseFloat(data[5]), 
+                color: data[2],
+                direction: parseFloat(data[6])};
+              break;
+            case 'B':
+              bullets.push({
+                posX: parseFloat(data[1]), 
+                posY: parseFloat(data[2]), 
+                direction: parseFloat(data[3])});
+              break;
+            case 'M':
+              for (k in data)
+              {
+                if(k != 0 && data[k] != '')
+                {
+                  envMap.push(data[k])
+                }
+              }
+              break;
+            case 'S':
+              score = document.getElementById("score");
+              var str = '';
+              if (scores == true)
+              {
+                str = score.innerHTML;
+              }
+              scores = true;
+              str += data[1] + " - " + data[2] + "<br />";
+              score.innerHTML = str;
+              break;
+            case 'E':
+              var smoke = Sprite({
+                context: ctx,
+                width: 1280,
+                height: 128,
+                image: smokeImage,
+                numberOfFrames: 10,
+                ticksPerFrame: 2,
+                x: parseFloat(data[1]),
+                y: parseFloat(data[2])
+              });
+              smokeList.push(smoke);
+              soundExplosion.cloneNode().play();
+              break;
+            case 'TREE':
+              break;
+            case 'ROCK':
+              break;
+            case 'POWERUP':
+              break;
+            case 'SMOKE':
+              var smoke = Sprite({
+                context: ctx,
+                width: 1280,
+                height: 128,
+                image: smokeImage,
+                numberOfFrames: 10,
+                ticksPerFrame: 20,
+                x: parseFloat(data[1]),
+                y: parseFloat(data[2])
+              });
+              smokeList.push(smoke);
+              break;
+          }
+        }
+      }
+  
+  function drawGround() {
+    var startX = 0;
+    var startY = 0;
+    
+    for (var i = 0; i < envMap.length; i++) {
+      if (i > 0 && i % 16 == 0) {
+        startX = 0;
+        startY += 50;
+      }
+      
+      ctx.drawImage(envImages[envMap[i]], 0, 0, envWidth, envHeight, startX, startY, 100, 100);
+      startX += 50;
+    }
+  }
+
+  // ========================================================
+        function Sprite (options) {
+          var obj = {};
+                
+          obj.context = options.context;
+          obj.width = options.width;
+          obj.height = options.height;
+          obj.image = options.image;
+          obj.x = options.x;
+          obj.y = options.y;
+
+          obj.frameIndex = 0;
+          obj.tickCount = 0;
+          obj.ticksPerFrame = options.ticksPerFrame;
+          obj.numberOfFrames = options.numberOfFrames || 1;
+
+          obj.destroy = false;
+
+          obj.render = function () {
+            // Draw the animation
+            obj.context.drawImage(
+              obj.image,
+              obj.frameIndex * obj.width / obj.numberOfFrames,
+              0,
+              obj.width / obj.numberOfFrames,
+              obj.height,
+              obj.x - (obj.height / 2),
+              obj.y - (obj.height / 2),
+              obj.width / obj.numberOfFrames,
+              obj.height);
+          };
+
+          obj.update = function () {
+            obj.tickCount += 1;
+      
+            if (obj.tickCount > obj.ticksPerFrame) {
+              obj.tickCount = 0;
+          
+              // If the current frame index is in range
+              if (obj.frameIndex < obj.numberOfFrames - 1) {  
+                // Go to the next frame
+                obj.frameIndex += 1;
+              } else {
+                obj.destroy = true;
+              }
+            }
+          };
+
+          return obj;
+        }
+
+        function EnvObj(options) {
+          var obj = {};
+
+          obj.context = options.context;
+          obj.image = options.image;
+          obj.width = options.width;
+          obj.height = options.height;
+          obj.x = options.x;
+          obj.y = options.y;
+
+          obj.destroy = false;
+
+          obj.render = function () {
+            obj.context.drawImage(
+              obj.image,
+              0,
+              0,
+              obj.width,
+              obj.height,
+              obj.x - (obj.height / 2),
+              obj.y - (obj.height / 2),
+              obj.width,
+              obj.height);
+          };
+
+          return obj;
+        }
+
+        // ========================================================
+
+    function rect(x, y, w, h, stroke) {
+      ctx.beginPath();
+      ctx.rect(x, y, w, h);
+      ctx.closePath();
+      ctx.fill();
+      
+      if (stroke)
+      {
+        ctx.stroke();
+      }
+    }
+  
+    function drawObject(t, x, y, w, h, c, d) {  // t - type; x, y - coords; w, h - dimensions; c - color; d - direction
+      var index = 0;
+      var angle = d;
+      
+      switch (c) {
+        case "k":
+          index = 0;
+          break;
+        case "b":
+          index = 1;
+          break;
+        case "g":
+          index = 2;
+          break;
+        case "r":
+          index = 3;
+          break;      
+      }
+      
+      // save the current co-ordinate system 
+      // before we screw with it
+      ctx.save(); 
+  
+    // move to the middle of where we want to draw our image
+      ctx.translate(x + w/2, y + h/2);
+     
+      // rotate around that point, converting our 
+      // angle from degrees to radians 
+      ctx.rotate(angle * TO_RADIANS);
+   
+      // draw it up and to the left by half the width
+      // and height of the image 
+      switch (t) {
+        case "tank":
+          ctx.drawImage(tanksImages[index], 0, 0, 75, 70, -w/2, -h/2, w, h);
+      ctx.drawImage(barrelImages[index], 0, 0, 16, 50, -8/2, -25/2 - 10, 8, 25);
+          break;
+        case "bullet":
+      ctx.drawImage(bulletImages[0], 0, 0, 12, 26, -w/2, -h/2, w, h);
+          break;
+      }
+      
+      // and restore the co-ords to how they were when we began
+      ctx.restore(refreshrate); 
+    }
+
+      function clear() {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+      }
+
+    function init() {
+      canvas = document.getElementById("canvas");
+      ctx = canvas.getContext("2d");
+      
+      for (var i = 0; i < tanksList.length; i++) {
+        var tnk = new Image();
+        tnk.src = tanksPath + tanksList[i];
+        tanksImages.push(tnk);
+        
+        var brl = new Image();
+        brl.src = tanksPath + barrelList[i];
+        barrelImages.push(brl);
+      }
+  
+      var bul = new Image();
+      bul.src = bulletPath + bulletList[0];
+      bulletImages.push(bul);
+  
+      for (var i = 0; i < envGroundList.length; i++) {
+        var env = new Image();
+        env.src = envPath + envGroundList[i];
+        envImages.push(env);
+      }
+
+      smokeImage.src = "./resources/Smoke/smoke2.png";
+      treeImage.src = "./resources/Environment/tree.png";
+      rockImage.src = "./resources/Environment/rock.png";
+
+      setInterval(draw, 1000/refreshrate);
+      // setInterval(generateRandomSmoke, 500);
+
+      generateRandomObjects("tree", 1);
+      generateRandomObjects("rock", 2);
+
+      console.log(treeList);
+      console.log(rockList);
+    }
+
+    function generateRandomSmoke() {
+      var smoke = Sprite({
+        context: ctx,
+        width: 1280,
+        height: 128,
+        image: smokeImage,
+        numberOfFrames: 10,
+        ticksPerFrame: 30,
+        x: Math.floor((Math.random() * 800) + 1),
+        y: Math.floor((Math.random() * 800) + 1)
+      });
+
+      smokeList.push(smoke);
+    }
+
+    function generateRandomObjects(type, amount) {
+      for (var i = 0; i < amount; i++) {
+        switch (type) {
+          case "tree":
+            var tree = EnvObj({
+              context: ctx,
+              width: 87,
+              height: 87,
+              image: treeImage,
+              x: Math.floor((Math.random() * 800) + 1),
+              y: Math.floor((Math.random() * 800) + 1)
+            });
+
+            treeList.push(tree);
+            break;
+          case "rock":
+            var rock = EnvObj({
+              context: ctx,
+              width: 43,
+              height: 43,
+              image: rockImage,
+              x: Math.floor((Math.random() * 800) + 1),
+              y: Math.floor((Math.random() * 800) + 1)
+            });
+
+            rockList.push(rock);
+            break;
+        }
+      }
+    }
+
+    function websocketAction(action)
+    {
+      websocket.send(action);
+    }
+
+    function removePressed(direction) {
+      var selected = -1;
+      for (var i = 0; i < pressed.length; i++)
+      {
+        if(pressed[i] == direction)
+        {
+          selected = i;
+          break;
+        }
+      }
+      pressed.splice(selected, 1);
+    }
+
+    function draw() {
+      clear();
+      
+      ctx.fillStyle = "white";
+      ctx.strokeStyle = "black";
+  
+      rect(0, 0, WIDTH, HEIGHT, true);
+    drawGround();
+      
+      for (k in bullets){
+        drawObject("bullet", bullets[k].posX, bullets[k].posY, bulletWidth, bulletHeight, "b", bullets[k].direction);
+      }
+
+      for (k in users) {
+        drawObject("tank", users[k].posX, users[k].posY, tankWidth, tankHeight, users[k].color, users[k].direction);
+      }
+
+      for (k in rockList) {
+        if (rockList[k].destroy === true) {
+          continue;
+        }
+        rockList[k].render();
+      }
+
+      for (k in treeList) {
+        if (treeList[k].destroy === true) {
+          continue;
+        }
+        treeList[k].render();
+      }
+
+      for (k in smokeList) {
+        if (smokeList[k].destroy === true) {
+          //smokeList.splice(k, 1);
+          continue;
+        }
+        smokeList[k].render();
+        smokeList[k].update();
+      }
+    }
+
+      init();
+      window.addEventListener('keydown',doKeyDown, true);
+      window.addEventListener('keyup', doKeyUp, true);
+      </script>
+
+    </section>
+</body>
+</html>

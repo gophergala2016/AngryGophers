@@ -10,7 +10,7 @@ func (s *Server) calcAll() {
 
 forLoop:
 	for _, c := range s.clients {
-		if c.Death {
+		if c.GetDeath() {
 			continue forLoop
 		}
 		hit, hitClientId := s.checkHitTank(c)
@@ -18,10 +18,8 @@ forLoop:
 			c.Life = c.Life - 40
 			if c.Life < 0 {
 				c.Life = 100
-				c.Death = true
+				c.SetDeath(true, 0, 0)
 				s.explosionAdd(c.PositionX, c.PositionY)
-				c.PositionX = c.StartPosX
-				c.PositionY = c.StartPosY
 				s.scoreAdd(hitClientId)
 				s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
 				continue forLoop

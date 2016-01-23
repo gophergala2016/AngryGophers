@@ -1,9 +1,11 @@
 package engine
 
 import (
+	"math/rand"
 	"net"
 	"strconv"
 	"sync/atomic"
+	"time"
 )
 
 const channelBufSize int = 100
@@ -35,8 +37,6 @@ type Client struct {
 	Moving        bool
 	Fire          bool
 	LastFire      int
-	StartPosX     float32
-	StartPosY     float32
 }
 
 func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId string) (*Client, int) {
@@ -68,8 +68,7 @@ func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId stri
 		false,
 		false,
 		0,
-		float32(position[0]),
-		float32(position[1])}, 0
+	}, 0
 }
 
 func (c *Client) GetId() int {
@@ -86,4 +85,21 @@ func (c *Client) GetNick() string {
 
 func (c *Client) SetNick(nick string) {
 	c.nick = nick
+}
+
+func (c *Client) SetDeath(status bool, mapSizeX, mapSizeY float32) {
+	if status {
+		c.Death = true
+	} else {
+		if c.Death {
+			c.Death = false
+			r := rand.New(rand.NewSource(time.Now().UnixNano()))
+			c.PositionX = float32(r.Intn(int(mapSizeX - tankWidth)))
+			c.PositionY = float32(r.Intn(int(mapSizeY - tankHeight)))
+		}
+	}
+}
+
+func (c *Client) GetDeath() bool {
+	return c.Death
 }

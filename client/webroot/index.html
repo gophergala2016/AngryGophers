@@ -15,7 +15,7 @@
         Send
       </button>
     </div>
-    <div id="score" style="float:right;font-weight:bold;font-size:105px;text-align:center;width:40%;display:none;"></div>
+    <div id="score" style="float:right;font-weight:bold;font-size:15px;text-align:center;width:40%;display:none;"></div>
     <div>
       <canvas id="canvas" style="display:none;" width="800" height="800">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
     </div>
@@ -191,10 +191,13 @@
     var rockImage = new Image();
     var rockList = [];
 
+    var userNames = [];
+     
+
      websocket.onmessage = function(str) {
         // console.log(str.data);
         datalist = str.data.split("\n");
-        console.log(datalist);
+        //console.log(datalist);
         // x = 10;
         // y = 10;
         users = [];
@@ -241,8 +244,14 @@
               {
                 str = score.innerHTML;
               }
+              else
+              {
+                str = '<b>TOP scores</b><br>';
+              }
               scores = true;
-              str += data[1] + " - " + data[2] + "<br />";
+              console.log(users);
+              console.log(data);
+              str += userNames[data[1]] + " - " + data[2] + "<br />";
               score.innerHTML = str;
               break;
             case 'E':
@@ -277,6 +286,14 @@
                 y: parseFloat(data[2])
               });
               smokeList.push(smoke);
+              break;
+            case 'X':
+              setTimeout(function(){
+                websocketAction("respawn"); 
+              }, 3000);
+              break;
+            case 'U':
+              userNames[data[1]] = data[2];
               break;
           }
         }

@@ -68,6 +68,7 @@ func manageWebSocket(ws *websocket.Conn) {
 					delete(waitingRequests, int32(key))
 				}
 			case "F":
+//				log.Println(serverMessageString[2])
 				_, err := ws.Write([]byte(serverMessageString[2]))
 				CheckError(err)
 

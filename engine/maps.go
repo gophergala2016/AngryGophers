@@ -25,8 +25,8 @@ func (s *Server) getCollision(x, y float32) bool {
 	return s.mapa.speedPoint[int(x)][int(y)] == 0
 }
 
-func (s *mapa) drawMap() [][]int {
-	return s.ground
+func (s *mapa) drawMap() ([][]int, [][]int) {
+	return s.ground, s.speedPoint
 }
 
 func getMap(ground [][]int, speedGround []int) *mapa {

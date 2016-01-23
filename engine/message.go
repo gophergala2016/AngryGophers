@@ -29,7 +29,7 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 	}
 	switch msg {
 	case "respawn":
-		tmp.Death = false
+		tmp.SetDeath(false, canvasSizeX, canvasSizeY)
 	case "fire":
 		tmp.Fire = true
 	case "fire2":

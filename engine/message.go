@@ -28,6 +28,8 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 		return
 	}
 	switch msg {
+	case "respawn":
+		tmp.Death = false
 	case "fire":
 		tmp.Fire = true
 	case "fire2":
@@ -78,6 +80,9 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 forUser:
 	for _, user := range self.clients {
 		if user.Death {
+			if clientId == user.id {
+				result.WriteString("X;\n")
+			}
 			continue forUser
 		}
 		color := "r"

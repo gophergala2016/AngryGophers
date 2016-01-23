@@ -26,10 +26,11 @@
       var keyDownPressed = false;
       var keyLeftPressed = false;
       var keyRightPressed = false;
+      var pressed = [];
 
       var websocket = new WebSocket("ws://localhost:8080/echo");
 
-      function doKeyDown(evt) {
+      function doKeyDown(evt){
         switch (evt.keyCode) {
           case 32:
             if (!keySpacePressed) {
@@ -41,24 +42,28 @@
             break;
           case 38:
             if (!keyUpPressed) {
+              pressed.push("up");
               keyUpPressed = true;
               websocketAction("up");
             }
           break;
           case 40:  /* Down arrow */
             if (!keyDownPressed) {
+              pressed.push("down");
               keyDownPressed = true;
               websocketAction("down");
             }
           break;
           case 37:  /* Left arrow was pressed */
             if (!keyLeftPressed) {
+              pressed.push("left");
               keyLeftPressed = true;
               websocketAction("left");
             }
           break;
           case 39:  /* Right arrow was pressed */
             if (!keyRightPressed) {
+              pressed.push("right");
               keyRightPressed = true;
               websocketAction("right");
             }
@@ -66,7 +71,7 @@
         }
       }
 
-      function doKeyUp(evt) {
+      function doKeyUp(evt){
         var direction;
         switch (evt.keyCode) {
           case 32:
@@ -79,28 +84,40 @@
           break;
           case 38:
             if (keyUpPressed) {
-              websocketAction('up2');
+              direction = "up2";
+              removePressed('up');
               keyUpPressed = false;
             }
           break;
           case 40:  /* Down arrow was pressed */
             if (keyDownPressed) {
-              websocketAction('down2');
+              direction = "down2";
+              removePressed('down');
               keyDownPressed = false;
             }
           break;
           case 37:  /* Left arrow was pressed */
             if (keyLeftPressed) {
-              websocketAction('left2');
+              direction = "left2";
+              removePressed('left');
               keyLeftPressed = false;
             }
           break;
           case 39:  /* Right arrow was pressed */
             if (keyRightPressed) {
-              websocketAction('right2');
+              direction = "right2";
+              removePressed('right');
               keyRightPressed = false;
             }
           break;
+        }
+        if(pressed.length == 0 && direction)
+        {
+          websocketAction(direction);
+        }
+        else if (pressed.length > 0 && direction)
+        {
+          websocketAction(pressed[pressed.length - 1]);
         }
       }
 
@@ -116,11 +133,6 @@
         });
       });
 
-      </script>
-
-
-
-    <script type="text/javascript">
     var canvas;
     var ctx;
     var dx = 5;

@@ -55,7 +55,7 @@ func NewServer(conn *net.UDPConn) *Server {
 		[]int{0, 2, 2, 0, 2, 0, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
 	}
 
-	m := getMap(mapa1, speedGround)
+	m := getMap(mapa1, speedGround, canvasSizeX, canvasSizeY)
 	var reqId int32 = 0
 	var userId int32 = 1
 	s := &Server{

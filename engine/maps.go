@@ -2,11 +2,16 @@ package engine
 
 import (
 	"log"
+	"math/rand"
+	"time"
 )
 
 type mapa struct {
-	ground     [][]int
-	speedPoint [][]int
+	ground      [][]int
+	speedPoint  [][]int
+	speedGround []int
+	trees       [][]int
+	rocks       [][]int
 }
 
 func (s *Server) getSpeedPosition(x, y float32) float32 {
@@ -25,13 +30,22 @@ func (s *Server) getCollision(x, y float32) bool {
 	return s.mapa.speedPoint[int(x)][int(y)] == 0
 }
 
-func (s *mapa) drawMap() ([][]int, [][]int) {
-	return s.ground, s.speedPoint
+func (s *mapa) drawMap() ([][]int, []int) {
+	return s.ground, s.speedGround
 }
 
-func getMap(ground [][]int, speedGround []int) *mapa {
+func (s *mapa) GetTrees() [][]int {
+	return s.trees
+}
+
+func (s *mapa) GetRocks() [][]int {
+	return s.rocks
+}
+
+func getMap(ground [][]int, speedGround []int, mapSizeX, mapSizeY float32) *mapa {
 	s := &mapa{}
 	s.ground = ground
+	s.speedGround = speedGround
 
 	res := make([][]int, 800)
 	for x := 0; x < len(res); x++ {
@@ -47,6 +61,22 @@ func getMap(ground [][]int, speedGround []int) *mapa {
 				}
 			}
 		}
+	}
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	cntTree := r.Intn(20)
+	for i := 0; i < cntTree; i++ {
+		x := (r.Intn(int(mapSizeX)))
+		y := (r.Intn(int(mapSizeY)))
+		s.trees = append(s.trees, []int{x, y})
+	}
+
+	cntRock := r.Intn(20)
+	for i := 0; i < cntRock; i++ {
+		x := (r.Intn(int(mapSizeX)))
+		y := (r.Intn(int(mapSizeY)))
+		s.rocks = append(s.rocks, []int{x, y})
 	}
 
 	// // woda

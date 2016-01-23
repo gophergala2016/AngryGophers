@@ -29,6 +29,7 @@ type Client struct {
 	PositionX     float32
 	PositionY     float32
 	Life          int
+	Death         bool
 	Direction     int
 	Speed         float32
 	Moving        bool
@@ -50,7 +51,7 @@ func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId stri
 
 	maxId = int(atomic.AddInt32(&server.userId, 1))
 	position := firstPosition[maxId%4]
-
+	server.changesServer = true
 	return &Client{
 		maxId,
 		nick,
@@ -61,6 +62,7 @@ func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId stri
 		float32(position[0]),
 		float32(position[1]),
 		fullLife,
+		false,
 		defaultDirection,
 		defaultTankSpeed,
 		false,

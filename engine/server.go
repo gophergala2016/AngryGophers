@@ -11,17 +11,18 @@ import (
 var refreshModifier float32 = 1
 
 type Server struct {
-	conn      *net.UDPConn
-	userId    int32
-	reqId     int32
-	clients   map[string]*Client
-	bullets   []*Bullet
-	explosion Explosion
-	addCh     chan *Client
-	doneCh    chan bool
-	errCh     chan error
-	score     Scores
-	mapa      *mapa
+	conn          *net.UDPConn
+	userId        int32
+	reqId         int32
+	clients       map[string]*Client
+	bullets       []*Bullet
+	explosion     Explosion
+	addCh         chan *Client
+	doneCh        chan bool
+	errCh         chan error
+	score         Scores
+	mapa          *mapa
+	changesServer bool
 }
 
 func NewServer(conn *net.UDPConn) *Server {
@@ -33,7 +34,6 @@ func NewServer(conn *net.UDPConn) *Server {
 	errCh := make(chan error)
 	var score Scores
 	score.client = make(map[int]int)
-
 
 	var speedGround []int = []int{10, 0, 10, 30, 3}
 	var mapa1 [][]int = [][]int{
@@ -70,9 +70,10 @@ func NewServer(conn *net.UDPConn) *Server {
 		errCh,
 		score,
 		m,
+		true,
 	}
 
-//	s.mapa.setMap()
+	//	s.mapa.setMap()
 	return s
 }
 
@@ -97,6 +98,7 @@ func (s *Server) SendAll() {
 	}
 	s.scoreRead()
 	s.explosionRead()
+	s.changesServer = false
 }
 
 func (s *Server) Listen() {

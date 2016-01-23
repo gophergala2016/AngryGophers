@@ -68,20 +68,28 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 			}
 			result.WriteString("\n")
 		}
+
 	}
 	for _, u := range self.bullets {
 		result.WriteString(fmt.Sprintf("B;%.0f;%.0f;%d;\n",
 			u.x, u.y, u.direction))
 	}
+
+forUser:
 	for _, user := range self.clients {
+		if user.Death {
+			continue forUser
+		}
 		color := "r"
 		if clientId == user.id {
 			color = "b"
 		}
 
 		result.WriteString(fmt.Sprintf("T;%d;%s;%.0f;%.0f;%.0f;%d;%d;%d;\n",
-			user.id, color, user.PositionX, user.PositionY, user.Speed, user.Direction, user.Direction, 100))
+			user.GetId(), color, user.PositionX, user.PositionY, user.Speed, user.Direction, user.Direction, 100))
+
 	}
+
 	if self.explosion.show {
 		for _, point := range self.explosion.position {
 			result.WriteString(fmt.Sprintf("E;%.0f;%.0f;\n", point.x, point.y))
@@ -90,6 +98,12 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 	if self.score.change {
 		for id, point := range self.score.client {
 			result.WriteString(fmt.Sprintf("S;%d;%d;\n", id, point))
+		}
+	}
+	if self.changesServer {
+		for _, user := range self.clients {
+			result.WriteString(fmt.Sprintf("U;%d;%s;\n",
+				user.GetId(), user.GetNick()))
 		}
 	}
 	return result.String()

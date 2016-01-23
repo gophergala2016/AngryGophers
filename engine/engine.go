@@ -10,14 +10,22 @@ func (s *Server) calcAll() {
 
 forLoop:
 	for _, c := range s.clients {
+		if c.Death {
+			continue forLoop
+		}
 		hit, hitClientId := s.checkHitTank(c)
 		if hit {
-			s.explosionAdd(c.PositionX, c.PositionY)
-			c.PositionX = c.StartPosX
-			c.PositionY = c.StartPosY
-			s.scoreAdd(hitClientId)
-			s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
-			continue forLoop
+			c.Life = c.Life - 40
+			if c.Life < 0 {
+				c.Life = 100
+				c.Death = true
+				s.explosionAdd(c.PositionX, c.PositionY)
+				c.PositionX = c.StartPosX
+				c.PositionY = c.StartPosY
+				s.scoreAdd(hitClientId)
+				s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
+				continue forLoop
+			}
 		}
 
 		var speed float32

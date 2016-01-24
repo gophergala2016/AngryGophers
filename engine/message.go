@@ -317,6 +317,7 @@ forline:
 			if err != nil {
 				continue forline
 			}
+			s.changesServer = true
 			tmpUserNick[id] = data[2]
 		}
 	}

@@ -20,7 +20,8 @@ var ServerAddr *net.UDPAddr
 var serverMsg chan []byte
 var requestCounter int32 = 0
 var waitingRequests map[int32][]byte
-var client engine.Client
+var clientId int
+var clientNick string
 var server *engine.Server
 var currentMap *engine.Mapa = &engine.Mapa{}
 var lastReceivedId int64 = 0
@@ -70,8 +71,8 @@ func receiveServerMessages(ws *websocket.Conn, closeWs chan bool) {
 					waitingRequestsArray := strings.Split(string(waitingRequests[int32(key)]), ";")
 					id, err := strconv.Atoi(idString)
 					CheckError(err)
-					client.SetId(id)
-					client.SetNick(waitingRequestsArray[1])
+					clientId = id
+					clientNick = waitingRequestsArray[1]
 					delete(waitingRequests, int32(key))
 				}
 			case "OK":
@@ -81,14 +82,14 @@ func receiveServerMessages(ws *websocket.Conn, closeWs chan bool) {
 					delete(waitingRequests, int32(key))
 				}
 			case "F":
-				if cId := client.GetId(); cId > 0 {
-					sendMap := server.ParseMsgFromServerToStruct(serverMessageString[2], client.GetId())
+//				if clientId > 0 {
+					sendMap := server.ParseMsgFromServerToStruct(serverMessageString[2], clientId)
 					
 					if sendMap {
 						_, err := ws.Write([]byte(serverMessageString[2]))
 						CheckError(err)
 					}
-				}
+//				}
 
 			}
 		}
@@ -103,10 +104,10 @@ func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
 			return
 		default:
 		}
-		if cId := client.GetId(); cId > 0 {
+		if clientId > 0 {
 			actualTime := time.Now().UnixNano()
 			server.CalcAll(true)
-			server.SendAllClient(client.GetId(), ws)
+			server.SendAllClient(clientId, ws)
 			//			log.Print("timeNow", time.Now())
 	
 			differenceTime := (time.Now().UnixNano() - actualTime) / 1000 //microseconds
@@ -128,8 +129,8 @@ func CheckError(err error) {
 
 func main() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-	client = engine.Client{}
 	server = engine.NewServer(nil)
+	log.Println(server)
 	serverMsg = make(chan []byte)
 	waitingRequests = make(map[int32][]byte)
 	
@@ -149,19 +150,19 @@ func main() {
 				break forLoop
 			}
 			messageToSend := msg[:n]
-			if string(messageToSend) == "check" && client.GetNick() == "" {
+			if string(messageToSend) == "check" && clientNick == "" {
 				continue forLoop
 			}
 			
 			msgId := atomic.AddInt32(&requestCounter, 1)
 			
 			go func(messageToSend []byte, msgId int32) {
-				if string(messageToSend) == "check" && client.GetNick() != "" {
-					messageToSend = []byte("login;" + client.GetNick())
+				if string(messageToSend) == "check" && clientNick != "" {
+					messageToSend = []byte("login;" + clientNick)
 				}
 				
-				if cId :=client.GetId(); cId > 0{
-					tmp := server.SelectClient(cId)
+				if clientId > 0{
+					tmp := server.SelectClient(clientId)
 					if tmp != nil {
 						engine.UpdateClientData(tmp, string(messageToSend))
 					}

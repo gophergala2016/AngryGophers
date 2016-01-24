@@ -16,12 +16,17 @@ var Mapa1 [][]int = [][]int{
 	[]int{3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 3},
 	[]int{0, 2, 0, 0, 0, 2, 0, 1, 2, 0, 0, 2, 0, 2, 2, 2},
 	[]int{2, 0, 0, 0, 2, 0, 2, 1, 2, 2, 2, 2, 0, 2, 0, 0},
-	[]int{2, 2, 2, 0, 2, 2, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
-	[]int{0, 2, 2, 0, 2, 0, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
+	[]int{2, 2, 0, 0, 2, 2, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
+	[]int{2, 2, 2, 0, 2, 0, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
 }
 
 const FramePerSec int64 = 30
 const TimePerFrame int64 = 1000000 / FramePerSec
+
+const ClientFramePerSec int64 = 60
+const ClientTimePerFrame int64 = 1000000 / FramePerSec
+const ClientToServerRation int64 = ClientTimePerFrame/TimePerFrame
+
 var TreeList1 [][]int = [][]int{
 	[]int{288, 478},
 	[]int{303, 140},

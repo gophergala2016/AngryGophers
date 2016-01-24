@@ -21,7 +21,9 @@ var serverMsg chan []byte
 var requestCounter int32 = 0
 var waitingRequests map[int32][]byte
 var client engine.Client
+var server *engine.Server
 var currentMap *engine.Mapa = &engine.Mapa{}
+var lastReceivedId int64 = 0
 
 //// CLIENT ////////
 func sendMessage(msg []byte) {
@@ -51,6 +53,13 @@ func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
 		// log.Println(serverMessageString)
 		// log.Println(waitingRequests)
 		if len(serverMessageString) == 3 {
+			serverMessageId, err := strconv.ParseInt(serverMessageString[0], 10, 64)
+			CheckError(err)
+			if(serverMessageId < lastReceivedId){
+				continue
+			}
+			lastReceivedId = serverMessageId
+			
 			switch serverMessageString[1] {
 			case "LOGIN":
 				idKey := strings.SplitN(string(serverMessageString[2]), ";", 2)
@@ -96,8 +105,7 @@ func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
 
 			}
 		}
-		//		_, err := ws.Write(serverMessage)
-		//		CheckError(err)
+
 	}
 }
 
@@ -110,6 +118,7 @@ func CheckError(err error) {
 func main() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	client = engine.Client{}
+	server = engine.NewServer(nil)
 	serverMsg = make(chan []byte)
 	waitingRequests = make(map[int32][]byte)
 	ReadFromWebsocket := func(ws *websocket.Conn) {

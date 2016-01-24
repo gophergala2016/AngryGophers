@@ -40,7 +40,7 @@ func main() {
 	go func() {
 		for {
 			actualTime := time.Now().UnixNano()
-
+			server.CalcAll()
 			server.SendAll()
 			//			log.Print("timeNow", time.Now())
 

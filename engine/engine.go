@@ -5,7 +5,7 @@ const canvasSizeY float32 = 800
 const canvasMapX float32 = 16
 const canvasMapY float32 = 16
 
-func (s *Server) calcAll() {
+func (s *Server) CalcAll() {
 	s.checkBulletsOnMap(canvasSizeX, canvasSizeY, refreshModifier)
 
 forLoop:

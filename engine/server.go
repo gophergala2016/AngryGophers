@@ -74,7 +74,6 @@ func (s *Server) sendPastMessages(c *Client) {
 }
 
 func (s *Server) SendAll() {
-	s.calcAll()
 	for _, c := range s.clients {
 		m := s.BuildAnswer(c.id, false)
 		s.sendResponse("F", c.RemoteAddr, m)
@@ -105,10 +104,12 @@ func (s *Server) Listen() {
 }
 
 func (s *Server) sendResponse(typ string, addr *net.UDPAddr, msg string) {
-	id := atomic.AddInt32(&s.reqId, 1)
-	// log.Print("msg: ", fmt.Sprintf("%d;%s;%s", id, typ, msg))
-	_, err := s.conn.WriteToUDP([]byte(fmt.Sprintf("%d;%s;%s", id, typ, msg)), addr)
-	if err != nil {
-		log.Printf("Couldn't send response %v", err)
+	if addr != nil {
+		id := atomic.AddInt32(&s.reqId, 1)
+		// log.Print("msg: ", fmt.Sprintf("%d;%s;%s", id, typ, msg))
+		_, err := s.conn.WriteToUDP([]byte(fmt.Sprintf("%d;%s;%s", id, typ, msg)), addr)
+		if err != nil {
+			log.Printf("Couldn't send response %v", err)
+		}
 	}
 }

@@ -355,6 +355,8 @@
         for (k in datalist) {
           parseLine(datalist[k]);
         }
+        draw();
+        
         if (scores.length > 0)
         {
           score = document.getElementById("score");
@@ -681,7 +683,7 @@
       treeImage.src = "./resources/Environment/tree.png";
       rockImage.src = "./resources/Environment/rock.png";
 
-      setInterval(draw, 1000/refreshrate);
+      //setInterval(draw, 1000/refreshrate);
       // setInterval(generateRandomSmoke, 500);
 
       // generateRandomObjects("tree", 1);

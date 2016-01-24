@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"../engine"
+	"github.com/skratchdot/open-golang/open"
 	"golang.org/x/net/websocket"
 )
 
@@ -194,5 +195,6 @@ func main() {
 	defer conn.Close()
 	go manageMessages()
 
+	open.Run("http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -29,6 +29,24 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 		s.sendResponse("OK", remoteaddr, idReq)
 		return
 	}
+	
+	UpdateClientData(tmp, msg)
+	s.clients[remoteaddr.String()] = tmp
+	s.sendResponse("OK", remoteaddr, idReq)
+}
+
+func (s *Server) SelectClient(id int) *Client {
+	tmp := &Client{}
+	for _, client := range(s.clients) {
+		if x :=tmp.GetId(); x == id {
+			tmp = client
+			break;
+		}
+	}
+	return tmp
+}
+
+func UpdateClientData(tmp *Client, msg string) {
 	switch msg {
 	case "respawn":
 		tmp.SetDeath(false, canvasSizeX, canvasSizeY)
@@ -62,9 +80,6 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 		tmp.Moving = false
 		tmp.Speed = 0
 	}
-
-	s.clients[remoteaddr.String()] = tmp
-	s.sendResponse("OK", remoteaddr, idReq)
 }
 
 func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {

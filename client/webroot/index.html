@@ -258,10 +258,12 @@
           switch (data[0])
           {
             case 'SHOT':
-              soundFire.cloneNode().play();
+              // soundFire.cloneNode().play();
+              console.log("SHOT");
               break;
             case 'HIT':
-              soundHit[Math.floor(Math.random()*soundHit.length)].cloneNode().play();
+              // soundHit[Math.floor(Math.random()*soundHit.length)].cloneNode().play();
+              console.log("HIT");
               break;
             case 'T':
               users[data[1]] = {

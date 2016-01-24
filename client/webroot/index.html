@@ -282,8 +282,8 @@
                 width: 87,
                 height: 87,
                 image: treeImage,
-                x: Math.floor((Math.random() * 800) + 1),
-                y: Math.floor((Math.random() * 800) + 1)
+                x: data[1],
+                y: data[2]
               });
 
               treeList.push(tree);
@@ -294,8 +294,8 @@
                 width: 43,
                 height: 43,
                 image: rockImage,
-                x: Math.floor((Math.random() * 800) + 1),
-                y: Math.floor((Math.random() * 800) + 1)
+                x: data[1],
+                y: data[2]
               });
 
               rockList.push(rock);
@@ -536,37 +536,6 @@
       });
 
       smokeList.push(smoke);
-    }
-
-    function generateRandomObjects(type, amount) {
-      for (var i = 0; i < amount; i++) {
-        switch (type) {
-          case "tree":
-            var tree = EnvObj({
-              context: ctx,
-              width: 87,
-              height: 87,
-              image: treeImage,
-              x: Math.floor((Math.random() * 800) + 1),
-              y: Math.floor((Math.random() * 800) + 1)
-            });
-
-            treeList.push(tree);
-            break;
-          case "rock":
-            var rock = EnvObj({
-              context: ctx,
-              width: 43,
-              height: 43,
-              image: rockImage,
-              x: Math.floor((Math.random() * 800) + 1),
-              y: Math.floor((Math.random() * 800) + 1)
-            });
-
-            rockList.push(rock);
-            break;
-        }
-      }
     }
 
     function websocketAction(action)

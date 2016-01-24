@@ -68,8 +68,8 @@ forLoop:
 		powerUpBool, powerUpId := s.checkPowerup(c.id, c.PositionX, c.PositionY, c.PositionX+tankWidth, c.PositionY+tankHeight)
 		if powerUpBool {
 			if powerUpId == 1 {
-				c.Speed = c.Speed * 2
-				c.Powerup = 50
+				c.Speed = c.Speed * 10
+				c.Powerup = 5000
 			}
 		}
 		if c.Powerup > 0 {

@@ -329,10 +329,10 @@
     var lastPressed = "u";
     // var websocket = new WebSocket("ws://localhost:8080/entry");
 
-    var soundExplosion = new Audio("./resources/Sounds/explosion.mp3");
-    var soundHit = [new Audio("./resources/Sounds/hit1.mp3"), new Audio("./resources/Sounds/hit2.mp3")];
-    var soundFire = new Audio("./resources/Sounds/fire.mp3");
-    var soundTank1 = new Audio("./resources/Sounds/tank1.mp3");
+    var soundExplosion = new Audio("./resources/Sounds/explosion.mp3").cloneNode();
+    var soundHit = [new Audio("./resources/Sounds/hit1.mp3").cloneNode(), new Audio("./resources/Sounds/hit2.mp3").cloneNode()];
+    var soundFire = new Audio("./resources/Sounds/fire.mp3").cloneNode();
+    var soundTank1 = new Audio("./resources/Sounds/tank1.mp3").cloneNode();
 
     var treeImage = new Image();
     var treeList = [];
@@ -384,12 +384,10 @@
           switch (data[0])
           {
             case 'SHOT':
-              // soundFire.cloneNode().play();
-              console.log("SHOT");
+              soundFire.play();
               break;
             case 'HIT':
-              // soundHit[Math.floor(Math.random()*soundHit.length)].cloneNode().play();
-              console.log("HIT");
+              soundHit[Math.floor(Math.random()*soundHit.length)].play();
               break;
             case 'T':
               users[data[1]] = {
@@ -434,7 +432,7 @@
                 y: parseFloat(data[2])
               });
               smokeList.push(smoke);
-              soundExplosion.cloneNode().play();
+              soundExplosion.play();
               break;
             case 'MT':
               var tree = EnvObj({

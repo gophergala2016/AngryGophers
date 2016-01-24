@@ -8,7 +8,7 @@ const tankHeightHalf float32 = 17.5
 const defaultTankSpeed float32 = 5
 
 func (s *Server) checkHitTank(c *Client) (bool, int) {
-	hit, hitClientId := s.checkHitBullet(c.id, c.PositionX, c.PositionY, c.PositionX+tankWidth, c.PositionY+tankHeight)
+	hit, hitClientId := s.checkHitBullet(c.id, c.PositionX-10, c.PositionY-10, c.PositionX+tankWidth, c.PositionY+tankHeight)
 	if hit {
 		return true, hitClientId
 	}

@@ -3,7 +3,7 @@ package engine
 const bulletSpeed float32 = 6
 
 const bulletWidthHalf float32 = 3
-const bulletHeightHalf float32 = 6.5
+const bulletHeightHalf float32 = 7
 
 type Bullet struct {
 	x         float32

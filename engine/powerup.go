@@ -47,6 +47,7 @@ func (s *Server) checkPowerup(clientId int, tankX1, tankY1, tankX2, tankY2 float
 				}
 			}
 			s.powerups.powerup = tmpList
+			s.generatePowerup(canvasSizeX, canvasSizeY)
 			s.powerups.show = true
 			return true, b.typ
 		}

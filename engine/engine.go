@@ -35,7 +35,7 @@ forLoop:
 		powerUpBool, powerUpId := s.checkPowerup(c.id, c.PositionX, c.PositionY, c.PositionX+tankWidth, c.PositionY+tankHeight)
 		if powerUpBool {
 			if powerUpId == 1 {
-				c.Powerup = 500 * int(refreshModifier)
+				c.Powerup = 200 * int(refreshModifier)
 			}
 		}
 		if c.Powerup > 0 {

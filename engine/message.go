@@ -25,7 +25,7 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 	if tmp.idReqMax < int32(idReqInt) {
 		tmp.idReqMax = int32(idReqInt)
 	} else {
-		log.Print("message is old")
+		log.Print("message is old : ", tmp.idReqMax, " msg: ", msg)
 		return
 	}
 	switch msg {

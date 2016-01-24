@@ -338,6 +338,7 @@
     var treeList = [];
 
     var rockImage = new Image();
+    var powerupImage = new Image();
     var rockList = [];
     var power = null;
 
@@ -402,7 +403,7 @@
             scoreStr += '<tr id="player-score-' + scores[k].user + '" data-id="' + scores[k].point + '">';
             scoreStr += '<td style="width: 400px; text-align: left;">' + userNames[scores[k].user] + '</td>';
             scoreStr += '<td style="width: 200px; text-align: center;">' + scores[k].point + '</td>';
-            scoreStr += '<td style="width: 200px; text-align: center;">' + hpInfo + '</td>';
+            scoreStr += '<td class='hp_"+scores[k].user+"' style="width: 200px; text-align: center;">' + hpInfo + '</td>';
             scoreStr += '</tr>';
           }
 
@@ -499,7 +500,7 @@
                 context: ctx,
                 width: 43,
                 height: 43,
-                image: rockImage,
+                image: powerupImage,
                 x: data[1],
                 y: data[2]
               });
@@ -724,6 +725,7 @@
       smokeImage.src = "./resources/Smoke/smoke2.png";
       treeImage.src = "./resources/Environment/tree.png";
       rockImage.src = "./resources/Environment/rock.png";
+      powerupImage.src = "./resources/Powerup/bolt_gold.png";
 
       //setInterval(draw, 1000/refreshrate);
       // setInterval(generateRandomSmoke, 500);

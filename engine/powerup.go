@@ -18,14 +18,17 @@ type Powerup struct {
 
 func (s *Server) generatePowerup(mapSizeX, mapSizeY float32) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	for i := 0; i < 5; i++ {
-		s.powerups.powerup = append(s.powerups.powerup,
-			&Powerup{
-				x:   float32(r.Intn(int(mapSizeX - tankWidth))),
-				y:   float32(r.Intn(int(mapSizeY - tankHeight))),
-				typ: 1,
-			})
-	}
+	// for i := 0; i < 5; i++ {
+	x := float32(r.Intn(int(mapSizeX - tankWidth)))
+	y := float32(r.Intn(int(mapSizeY - tankHeight)))
+	s.powerups.powerup = append(s.powerups.powerup,
+		&Powerup{
+			x:   x,
+			y:   y,
+			typ: 1,
+		})
+	// log.Println("X Y ", x, y)
+	// }
 
 	s.powerups.show = true
 }

@@ -260,6 +260,9 @@
             case 'SHOT':
               soundFire.cloneNode().play();
               break;
+            case 'HIT':
+              soundHit[Math.floor(Math.random()*soundHit.length)].cloneNode().play();
+              break;
             case 'T':
               users[data[1]] = {
                 posX: parseFloat(data[3]), 
@@ -304,7 +307,6 @@
               });
               smokeList.push(smoke);
               soundExplosion.cloneNode().play();
-              soundHit[Math.floor(Math.random()*soundHit.length)].cloneNode().play();
               break;
             case 'MT':
               var tree = EnvObj({

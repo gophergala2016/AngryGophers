@@ -26,6 +26,7 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 		tmp.idReqMax = int32(idReqInt)
 	} else {
 		log.Print("message is old : ", tmp.idReqMax, " msg: ", msg)
+		s.sendResponse("OK", remoteaddr, idReq)
 		return
 	}
 	switch msg {
@@ -140,6 +141,9 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 	}
 	if self.newBullet {
 		result.WriteString("SHOT;\n")
+	}
+	if self.newHit {
+		result.WriteString("HIT;\n")
 	}
 	return result.String()
 }

@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"log"
 	"sync/atomic"
 )
 
@@ -30,7 +29,7 @@ forLoop:
 				c.SetDeath(true, 0, 0)
 				s.explosionAdd(c.PositionX, c.PositionY)
 				s.scoreAdd(hitClientId)
-				s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
+				// s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
 				continue forLoop
 			}
 		}

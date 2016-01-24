@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"strings"
 )
 
 func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr) {
@@ -68,7 +69,8 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 	var result bytes.Buffer
 	if firstAnswer {
-		x, speeds := self.mapa.drawMap()
+		x, speeds, name := self.mapa.drawMap()
+		result.WriteString("MN;" + name + ";\n")
 		for _, v := range x {
 			result.WriteString("M;")
 			for _, v2 := range v {
@@ -92,25 +94,26 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 
 	}
 	for _, u := range self.bullets {
-		result.WriteString(fmt.Sprintf("B;%.0f;%.0f;%d;\n",
-			u.x, u.y, u.direction))
+		result.WriteString(fmt.Sprintf("B;%.0f;%.0f;%d;%.2f;%d;\n",
+			u.x, u.y, u.direction, u.speed, u.ownerId))
 	}
 
-forUser:
 	for _, user := range self.clients {
+		typ := ""
 		if user.Death {
 			if clientId == user.id {
 				result.WriteString("X;\n")
+
 			}
-			continue forUser
+			typ = "X"
 		}
 		color := "r"
 		if clientId == user.id {
 			color = "b"
 		}
 
-		result.WriteString(fmt.Sprintf("T;%d;%s;%.0f;%.0f;%.0f;%d;%d;%d;\n",
-			user.GetId(), color, user.PositionX, user.PositionY, user.Speed, user.Direction, user.Direction, user.Life))
+		result.WriteString(fmt.Sprintf("T%s;%d;%s;%.0f;%.0f;%.0f;%d;%d;%d;\n",
+			typ, user.GetId(), color, user.PositionX, user.PositionY, user.Speed, user.Direction, user.Direction, user.Life))
 
 	}
 
@@ -147,3 +150,160 @@ T;1;R;10;10;0;0;50;
 kolor R G B K
 
 */
+
+func (s *Server) parseMsgFromServerToStruct(msg string, clientId int) {
+	var tmpBullets []*Bullet
+	var tmpExplosion []*Position
+	var tmpSmoke []*Position
+	tmpTanks := make(map[string]*Client)
+	tmpUserNick := make(map[int]string)
+	tmpScore := make(map[int]int)
+
+	lines := strings.Split(msg, "\n")
+forline:
+	for _, line := range lines {
+		data := strings.Split(line, ";")
+		switch data[0] {
+		case "B":
+			x, err := strconv.ParseFloat(data[1], 32)
+			if err != nil {
+				continue forline
+			}
+			y, err := strconv.ParseFloat(data[2], 32)
+			if err != nil {
+				continue forline
+			}
+			direction, err := strconv.Atoi(data[3])
+			if err != nil {
+				continue forline
+			}
+			speed, err := strconv.ParseFloat(data[4], 32)
+			if err != nil {
+				continue forline
+			}
+			ownerId, err := strconv.Atoi(data[5])
+			if err != nil {
+				continue forline
+			}
+			tmpBullets = append(tmpBullets, &Bullet{x: float32(x), y: float32(y), speed: float32(speed), direction: direction, ownerId: ownerId})
+
+		case "X":
+			for k, c := range s.clients {
+				if clientId == c.id {
+					s.clients[k].Death = true
+				}
+			}
+
+		case "T", "TX":
+			userId, err := strconv.Atoi(data[1])
+			if err != nil {
+				continue forline
+			}
+
+			positionX, err := strconv.ParseFloat(data[3], 32)
+			if err != nil {
+				continue forline
+			}
+			positionY, err := strconv.ParseFloat(data[4], 32)
+			if err != nil {
+				continue forline
+			}
+			life, err := strconv.Atoi(data[8])
+			if err != nil {
+				continue forline
+			}
+			direction, err := strconv.Atoi(data[6])
+			if err != nil {
+				continue forline
+			}
+			speed, err := strconv.ParseFloat(data[5], 32)
+			if err != nil {
+				continue forline
+			}
+			moving := false
+			if speed > 0 {
+				moving = true
+			}
+			death := false
+			if data[0] == "TX" {
+				death = true
+			}
+			tmpTanks[data[1]] = &Client{
+				id:        userId,
+				nick:      data[2],
+				PositionX: float32(positionX),
+				PositionY: float32(positionY),
+				Life:      life,
+				Death:     death,
+				Direction: direction,
+				Speed:     float32(speed),
+				Moving:    moving,
+			}
+
+		case "E":
+			x, err := strconv.ParseFloat(data[1], 32)
+			if err != nil {
+				continue forline
+			}
+			y, err := strconv.ParseFloat(data[2], 32)
+			if err != nil {
+				continue forline
+			}
+
+			tmpExplosion = append(tmpExplosion, &Position{x: float32(x), y: float32(y)})
+
+		case "SMOKE":
+			x, err := strconv.ParseFloat(data[1], 32)
+			if err != nil {
+				continue forline
+			}
+			y, err := strconv.ParseFloat(data[2], 32)
+			if err != nil {
+				continue forline
+			}
+
+			tmpSmoke = append(tmpSmoke, &Position{x: float32(x), y: float32(y)})
+
+		case "S":
+			id, err := strconv.Atoi(data[1])
+			if err != nil {
+				continue forline
+			}
+			point, err := strconv.Atoi(data[2])
+			if err != nil {
+				continue forline
+			}
+			tmpScore[id] = point
+
+		case "U":
+			id, err := strconv.Atoi(data[1])
+			if err != nil {
+				continue forline
+			}
+			tmpUserNick[id] = data[2]
+		}
+	}
+
+	if len(tmpExplosion) > 0 {
+		s.explosion.position = tmpExplosion
+		s.explosion.show = true
+	}
+
+	if len(tmpSmoke) > 0 {
+		s.smoke.position = tmpSmoke
+		s.smoke.show = true
+	}
+
+	if len(tmpScore) > 0 {
+		s.score.client = tmpScore
+		s.score.change = true
+	}
+
+	s.bullets = tmpBullets
+	s.clients = tmpTanks
+	for k, c := range s.clients {
+		if tmpUserNick[c.id] != "" {
+			s.clients[k].nick = tmpUserNick[c.id]
+		}
+	}
+}

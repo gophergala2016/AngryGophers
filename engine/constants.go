@@ -24,8 +24,8 @@ const FramePerSec int64 = 30
 const TimePerFrame int64 = 1000000 / FramePerSec
 
 const ClientFramePerSec int64 = 60
-const ClientTimePerFrame int64 = 1000000 / FramePerSec
-const ClientToServerRation float32 = float32(ClientTimePerFrame)/float32(TimePerFrame)
+const ClientTimePerFrame int64 = 1000000 / ClientFramePerSec
+const ClientToServerRatio float32 = float32(float32(FramePerSec)/float32(ClientFramePerSec))
 
 var TreeList1 [][]int = [][]int{
 	[]int{288, 478},

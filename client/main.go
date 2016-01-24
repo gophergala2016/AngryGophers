@@ -160,11 +160,18 @@ func main() {
 					messageToSend = []byte("login;" + client.GetNick())
 				}
 				
+				if cId :=client.GetId(); cId > 0{
+					tmp := server.SelectClient(cId)
+					if tmp != nil {
+						engine.UpdateClientData(tmp, string(messageToSend))
+					}
+				}
+				
 				waitingRequests[msgId] = messageToSend
 				for waitingRequests[msgId] != nil {
 					toSend := []byte(fmt.Sprintf("%d;", msgId))
 					sendMessage(append(toSend, messageToSend...))
-					<-time.After(time.Second * 2)
+					<-time.After(time.Second)
 				}
 			}(messageToSend, msgId)
 		}

@@ -34,3 +34,13 @@ Players can also release the dust cloud to hide their canny intenstions.
 * fire               - space
 * release dust cloud - ctrl
 
+## Screenshots
+
+![alt text](https://dl.dropboxusercontent.com/u/8496731/AngryGophers/tanks01.png "Join")
+![alt text](https://dl.dropboxusercontent.com/u/8496731/AngryGophers/tanks02.png "Play")
+![alt text](https://dl.dropboxusercontent.com/u/8496731/AngryGophers/tanks03.png "Dust cloud")
+![alt text](https://dl.dropboxusercontent.com/u/8496731/AngryGophers/tanks04.png "Dead")
+
+## Gameplay video
+
+[YouTube video with gameplay footage (the sound is muted, unfortunately)](https://youtu.be/cfOACGBG7Wc)

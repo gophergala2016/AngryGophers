@@ -5,7 +5,11 @@ const canvasSizeY float32 = 800
 const canvasMapX float32 = 16
 const canvasMapY float32 = 16
 
-func (s *Server) CalcAll() {
+func (s *Server) CalcAll(isClient bool) {
+	tmp := refreshModifier
+	if isClient {
+		refreshModifier = ClientToServerRation
+	}
 	s.checkBulletsOnMap(canvasSizeX, canvasSizeY, refreshModifier)
 
 forLoop:
@@ -80,4 +84,5 @@ forLoop:
 		}
 
 	}
+	refreshModifier = tmp
 }

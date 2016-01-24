@@ -6,6 +6,8 @@ import (
 	"net"
 	"strconv"
 	"sync/atomic"
+
+	"golang.org/x/net/websocket"
 )
 
 var refreshModifier float32 = 1
@@ -69,6 +71,10 @@ func (s *Server) Err(err error) {
 	s.errCh <- err
 }
 
+func (s *Server) SetMap(mapa [][]int, speedGround []int) {
+	s.mapa = GetMap(mapa, speedGround, canvasSizeX, canvasSizeY)
+}
+
 func (s *Server) sendPastMessages(c *Client) {
 	s.sendResponse("F", c.RemoteAddr, s.BuildAnswer(c.id, true))
 }
@@ -77,6 +83,18 @@ func (s *Server) SendAll() {
 	for _, c := range s.clients {
 		m := s.BuildAnswer(c.id, false)
 		s.sendResponse("F", c.RemoteAddr, m)
+	}
+	s.scoreRead()
+	s.explosionRead()
+	s.smokeRead()
+	s.changesServer = false
+}
+
+func (s *Server) SendAllClient(cId int, ws *websocket.Conn) {
+	m := s.BuildAnswer(cId, false)
+	_, err := ws.Write([]byte(m))
+	if err != nil {
+		log.Printf("Couldn't send response %v", err)
 	}
 	s.scoreRead()
 	s.explosionRead()

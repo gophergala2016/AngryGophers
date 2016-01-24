@@ -151,7 +151,7 @@ kolor R G B K
 
 */
 
-func (s *Server) parseMsgFromServerToStruct(msg string, clientId int) {
+func (s *Server) ParseMsgFromServerToStruct(msg string, clientId int) {
 	var tmpBullets []*Bullet
 	var tmpExplosion []*Position
 	var tmpSmoke []*Position
@@ -274,7 +274,17 @@ forline:
 				continue forline
 			}
 			tmpScore[id] = point
-
+			
+		case "M":
+			id, err := strconv.Atoi(data[1])
+			if err != nil {
+				continue forline
+			}
+			switch id {
+				case 1:
+				s.SetMap(Mapa1, SpeedGround1)
+			}
+			
 		case "U":
 			id, err := strconv.Atoi(data[1])
 			if err != nil {

@@ -38,13 +38,12 @@
       <canvas id="canvas" style="display: none;" class="windowResolution" width="800" height="800">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
     </div>
 
-    <div id="score" style="float: left; font-size: 25px; text-align: center; width: 300px; display: none;"></div>
-    <div id="scoreNew" style="display: none;"></div>
+    <div id="score" style="float: left; font-size: 25px; text-align: center; width: 400px; display: none; margin-left: 50px;"></div>
 
     <style>
-    body, html {
-      font-family: Bangers, serif;
-    }
+      body, html {
+        font-family: Bangers, serif;
+      }
       #canvasContainer {
         float:left;
       }
@@ -390,6 +389,7 @@
           scores = sortedScores;
 
           scoreStr += '<thead>';
+          scoreStr += '<tr><th colspan="3">TOP PLAYERS</th></tr>'
           scoreStr += '<tr><th>Name</th><th>Score</th><th>Health</th></tr>'
           scoreStr += '</thead>';
           scoreStr += '<tbody>';
@@ -402,9 +402,9 @@
               hpInfo = users[scores[k].user].hp;
             }
             scoreStr += '<tr id="player-score-' + scores[k].user + '" data-id="' + scores[k].point + '">';
-            scoreStr += '<td style="width: 400px; text-align: left;">' + userNames[scores[k].user] + '</td>';
-            scoreStr += '<td style="width: 200px; text-align: center;">' + scores[k].point + '</td>';
-            scoreStr += '<td class="hp_' + scores[k].user + '" style="width: 200px; text-align: center;">' + hpInfo + '</td>';
+            scoreStr += '<td style="width: 300px; text-align: left;">' + userNames[scores[k].user] + '</td>';
+            scoreStr += '<td style="width: 50px; text-align: center;">' + scores[k].point + '</td>';
+            scoreStr += '<td class="hp_' + scores[k].user + '" style="width: 50px; text-align: center;">' + hpInfo + '</td>';
             scoreStr += '</tr>';
           }
 

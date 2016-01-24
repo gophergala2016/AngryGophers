@@ -329,6 +329,12 @@ forline:
 			s.changesServer = true
 			tmpUserNick[id] = data[2]
 
+		case "SHOT":
+			s.newBullet = true
+
+		case "HIT":
+			s.newHit = true
+
 		case "POWER":
 			if data[1] == "X" {
 				s.powerups.powerup = []*Powerup{}

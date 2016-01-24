@@ -29,6 +29,8 @@ forLoop:
 				s.scoreAdd(hitClientId)
 				// s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
 				continue forLoop
+			} else {
+				s.newHit = true
 			}
 		}
 

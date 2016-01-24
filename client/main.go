@@ -54,11 +54,11 @@ func receiveServerMessages(ws *websocket.Conn, closeWs chan bool) {
 		if len(serverMessageString) == 3 {
 			serverMessageId, err := strconv.ParseInt(serverMessageString[0], 10, 64)
 			CheckError(err)
-			if(serverMessageId < lastReceivedId){
+			if serverMessageId < lastReceivedId {
 				continue
 			}
 			lastReceivedId = serverMessageId
-			
+
 			switch serverMessageString[1] {
 			case "LOGIN":
 				idKey := strings.SplitN(string(serverMessageString[2]), ";", 2)
@@ -82,15 +82,15 @@ func receiveServerMessages(ws *websocket.Conn, closeWs chan bool) {
 					delete(waitingRequests, int32(key))
 				}
 			case "F":
-//				if clientId > 0 {
-//	log.Println(clientId)
-					sendMap := server.ParseMsgFromServerToStruct(serverMessageString[2], clientId)
-					
-					if sendMap {
-						_, err := ws.Write([]byte(serverMessageString[2]))
-						CheckError(err)
-					}
-//				}
+				//				if clientId > 0 {
+				//	log.Println(clientId)
+				sendMap := server.ParseMsgFromServerToStruct(serverMessageString[2], clientId)
+
+				if sendMap {
+					_, err := ws.Write([]byte(serverMessageString[2]))
+					CheckError(err)
+				}
+				//				}
 
 			}
 		}
@@ -110,13 +110,13 @@ func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
 			server.CalcAll(true)
 			server.SendAllClient(clientId, ws)
 			//			log.Print("timeNow", time.Now())
-	
+
 			differenceTime := (time.Now().UnixNano() - actualTime) / 1000 //microseconds
 			//log.Print(differenceTime)
 			if differenceTime < engine.ClientTimePerFrame {
 				//	log.Println("Sleeep", int64((timePerFrame-differenceTime)/1000))
 				//	log.Println(time.Duration(timePerFrame-differenceTime) * time.Microsecond)
-				time.Sleep(time.Duration(engine.ClientTimePerFrame - differenceTime) * time.Microsecond)
+				time.Sleep(time.Duration(engine.ClientTimePerFrame-differenceTime) * time.Microsecond)
 			}
 		}
 	}
@@ -134,7 +134,7 @@ func main() {
 	log.Println(server)
 	serverMsg = make(chan []byte)
 	waitingRequests = make(map[int32][]byte)
-	
+
 	ReadFromWebsocket := func(ws *websocket.Conn) {
 		closeWs := make(chan bool)
 		closeWs2 := make(chan bool)
@@ -154,21 +154,21 @@ func main() {
 			if string(messageToSend) == "check" && clientNick == "" {
 				continue forLoop
 			}
-			
+
 			msgId := atomic.AddInt32(&requestCounter, 1)
-			
+
 			go func(messageToSend []byte, msgId int32) {
 				if string(messageToSend) == "check" && clientNick != "" {
 					messageToSend = []byte("login;" + clientNick)
 				}
-				
-				if clientId > 0{
+
+				if clientId > 0 {
 					tmp := server.SelectClient(clientId)
 					if tmp != nil {
 						engine.UpdateClientData(tmp, string(messageToSend))
 					}
 				}
-				
+
 				waitingRequests[msgId] = messageToSend
 				for waitingRequests[msgId] != nil {
 					toSend := []byte(fmt.Sprintf("%d;", msgId))
@@ -183,7 +183,7 @@ func main() {
 	// static files
 	http.Handle("/", http.FileServer(http.Dir("webroot")))
 
-	ServerAddr, err := net.ResolveUDPAddr("udp", "89.72.59.44:8081")
+	ServerAddr, err := net.ResolveUDPAddr("udp", "40.76.43.250:8081")
 	CheckError(err)
 
 	ClientAddr, err := net.ResolveUDPAddr("udp", ":0")

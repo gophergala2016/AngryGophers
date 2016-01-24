@@ -41,17 +41,10 @@ func manageMessages() {
 	}
 }
 
-func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
+func receiveServerMessages() {
 	for {
-		select {
-		case <-closeWs:
-			return
-		default:
-		}
 		serverMessage := <-serverMsg
 		serverMessageString := strings.SplitN(string(serverMessage), ";", 3)
-		// log.Println(serverMessageString)
-		// log.Println(waitingRequests)
 		if len(serverMessageString) == 3 {
 			serverMessageId, err := strconv.ParseInt(serverMessageString[0], 10, 64)
 			CheckError(err)
@@ -83,29 +76,35 @@ func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
 					delete(waitingRequests, int32(key))
 				}
 			case "F":
-				//				log.Println(serverMessageString[2])
-				lines := strings.Split(serverMessageString[2], "\n")
-				for _, line := range lines {
-
-					if len(line) > 0 {
-						cols := strings.Split(line, ";")
-						switch cols[0] {
-						case "M":
-							switch cols[1] {
-							case "1":
-								currentMap = engine.GetMap(engine.Mapa1, engine.SpeedGround1, 800, 800)
-							}
-						}
-					}
-
+				if cId := client.GetId(); cId > 0 {
+					server.ParseMsgFromServerToStruct(serverMessageString[2], client.GetId())
 				}
-
-				_, err := ws.Write([]byte(serverMessageString[2]))
-				CheckError(err)
 
 			}
 		}
 
+	}
+}
+
+func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
+	for {
+		select {
+		case <-closeWs:
+			return
+		default:
+		}
+		actualTime := time.Now().UnixNano()
+		server.CalcAll(true)
+		server.SendAllClient(client.GetId(), ws)
+		//			log.Print("timeNow", time.Now())
+
+		differenceTime := (time.Now().UnixNano() - actualTime) / 1000 //microseconds
+		//log.Print(differenceTime)
+		if differenceTime < engine.ClientTimePerFrame {
+			//	log.Println("Sleeep", int64((timePerFrame-differenceTime)/1000))
+			//	log.Println(time.Duration(timePerFrame-differenceTime) * time.Microsecond)
+			time.Sleep(time.Duration(engine.ClientTimePerFrame - differenceTime) * time.Microsecond)
+		}
 	}
 }
 
@@ -121,6 +120,7 @@ func main() {
 	server = engine.NewServer(nil)
 	serverMsg = make(chan []byte)
 	waitingRequests = make(map[int32][]byte)
+	
 	ReadFromWebsocket := func(ws *websocket.Conn) {
 		closeWs := make(chan bool)
 		go manageWebSocket(ws, closeWs)
@@ -168,8 +168,8 @@ func main() {
 	conn, err = net.DialUDP("udp", ClientAddr, ServerAddr)
 	CheckError(err)
 	defer conn.Close()
-
 	go manageMessages()
+	go receiveServerMessages()
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

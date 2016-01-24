@@ -26,7 +26,7 @@ There are few types of ground tiles which differ in tank speed:
  
 There are also some random power-ups that give you extra speed.
 
-Players can also release the dust cloud to hide his canny intenstions.
+Players can also release the dust cloud to hide their canny intenstions.
 
 ## Key bindings
 

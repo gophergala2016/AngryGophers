@@ -242,7 +242,7 @@ forline:
 				nick:      data[2],
 				PositionX: float32(positionX),
 				PositionY: float32(positionY),
-				Life:      life,
+				Life:      int32(life),
 				Death:     death,
 				Direction: direction,
 				Speed:     float32(speed),

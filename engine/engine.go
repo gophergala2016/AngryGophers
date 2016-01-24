@@ -1,5 +1,10 @@
 package engine
 
+import (
+	"log"
+	"sync/atomic"
+)
+
 const canvasSizeX float32 = 800
 const canvasSizeY float32 = 800
 const canvasMapX float32 = 16
@@ -19,9 +24,9 @@ forLoop:
 		}
 		hit, hitClientId := s.checkHitTank(c)
 		if hit {
-			c.Life = c.Life - 40
-			if c.Life < 0 {
-				c.Life = 100
+			life := atomic.AddInt32(&c.Life, -5)
+			if life <= 0 {
+				atomic.StoreInt32(&c.Life, 100)
 				c.SetDeath(true, 0, 0)
 				s.explosionAdd(c.PositionX, c.PositionY)
 				s.scoreAdd(hitClientId)
@@ -38,29 +43,31 @@ forLoop:
 			speed = s.setSpeedTank(c, refreshModifier)
 			newPositionX := c.PositionX
 			newPositionY := c.PositionY
-			switch c.Direction {
-			case 0:
-				newPositionY = c.PositionY - speed
-				if newPositionY <= 0 {
-					newPositionY = 0
+			if s.checkColision(c, newPositionX, newPositionY) == false {
+				switch c.Direction {
+				case 0:
+					newPositionY = c.PositionY - speed
+					if newPositionY <= 0 {
+						newPositionY = 0
+					}
+				case 90:
+					newPositionX = c.PositionX + speed
+					if newPositionX+tankHeight >= canvasSizeX {
+						newPositionX = canvasSizeX - tankHeight
+					}
+				case 180:
+					newPositionY = c.PositionY + speed
+					if newPositionY+tankHeight >= canvasSizeY {
+						newPositionY = canvasSizeY - tankHeight
+					}
+				case 270:
+					newPositionX = c.PositionX - speed
+					if newPositionX <= 0 {
+						newPositionX = 0
+					}
 				}
-			case 90:
-				newPositionX = c.PositionX + speed
-				if newPositionX+tankHeight >= canvasSizeX {
-					newPositionX = canvasSizeX - tankHeight
-				}
-			case 180:
-				newPositionY = c.PositionY + speed
-				if newPositionY+tankHeight >= canvasSizeY {
-					newPositionY = canvasSizeY - tankHeight
-				}
-			case 270:
-				newPositionX = c.PositionX - speed
-				if newPositionX <= 0 {
-					newPositionX = 0
-				}
+				s.checkColision(c, newPositionX, newPositionY)
 			}
-			s.checkColision(c, newPositionX, newPositionY)
 		}
 
 		if c.Fire {

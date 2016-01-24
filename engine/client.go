@@ -11,7 +11,7 @@ import (
 const channelBufSize int = 100
 
 var maxId int = 0
-var fullLife int = 100
+var fullLife int32 = 100
 var defaultDirection int = 0
 var prev string
 
@@ -30,7 +30,7 @@ type Client struct {
 	server        *Server
 	PositionX     float32
 	PositionY     float32
-	Life          int
+	Life          int32
 	Death         bool
 	Direction     int
 	Speed         float32

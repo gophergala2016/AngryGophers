@@ -20,6 +20,8 @@ var Mapa1 [][]int = [][]int{
 	[]int{0, 2, 2, 0, 2, 0, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
 }
 
+const FramePerSec int64 = 30
+const TimePerFrame int64 = 1000000 / FramePerSec
 var TreeList1 [][]int = [][]int{
 	[]int{288, 478},
 	[]int{303, 140},

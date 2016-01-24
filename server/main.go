@@ -10,9 +10,6 @@ import (
 	"../engine"
 )
 
-const framePerSec int64 = 30
-const timePerFrame int64 = 1000000 / framePerSec
-
 func sendResponse(conn *net.UDPConn, addr *net.UDPAddr, msg string) {
 	_, err := conn.WriteToUDP([]byte(msg), addr)
 	if err != nil {
@@ -35,7 +32,7 @@ func main() {
 		return
 	}
 
-	log.Println(timePerFrame, " - timePerFrame")
+	log.Println(engine.TimePerFrame, " - timePerFrame")
 
 	server := engine.NewServer(ser)
 	go server.Listen()
@@ -49,10 +46,10 @@ func main() {
 
 			differenceTime := (time.Now().UnixNano() - actualTime) / 1000 //microseconds
 			//log.Print(differenceTime)
-			if differenceTime < timePerFrame {
+			if differenceTime < engine.TimePerFrame {
 				//	log.Println("Sleeep", int64((timePerFrame-differenceTime)/1000))
 				//	log.Println(time.Duration(timePerFrame-differenceTime) * time.Microsecond)
-				time.Sleep(time.Duration(timePerFrame-differenceTime) * time.Microsecond)
+				time.Sleep(time.Duration(engine.TimePerFrame-differenceTime) * time.Microsecond)
 			}
 		}
 

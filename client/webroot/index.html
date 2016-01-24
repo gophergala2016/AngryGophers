@@ -21,6 +21,7 @@
     </div>
 
     <script type="text/javascript">
+      var loggedIn = false;
       var keySpacePressed = false;
       var keyCtrlPressed = false;
       var keyUpPressed = false;
@@ -140,11 +141,16 @@
       $(function() {
         $("#submitNick").click(function() {
           websocketAction("login;" + $('#nickName').val());
-          $('#newSession').hide();
-          $('#score').show();
-          $('#canvas').show();
+          logInAction();
         });
       });
+
+      function logInAction() {
+        loggedIn = true;
+        $('#newSession').hide();
+        $('#score').show();
+        $('#canvas').show();
+      }
 
     var canvas;
     var ctx;
@@ -264,6 +270,9 @@
                 direction: parseFloat(data[3])});
               break;
             case 'M':
+              if (!loggedIn) {
+                logInAction();
+              };
               for (k in data)
               {
                 if(k != 0 && data[k] != '')
@@ -534,6 +543,13 @@
 
       console.log(treeList);
       console.log(rockList);
+      var check = setInterval(function () {
+        if (websocket.readyState === 1) {
+          websocketAction("check");
+          clearInterval(check);
+        }
+      }, 50);
+      
     }
 
     function generateRandomSmoke() {

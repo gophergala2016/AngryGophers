@@ -104,7 +104,7 @@ forUser:
 		}
 
 		result.WriteString(fmt.Sprintf("T;%d;%s;%.0f;%.0f;%.0f;%d;%d;%d;\n",
-			user.GetId(), color, user.PositionX, user.PositionY, user.Speed, user.Direction, user.Direction, 100))
+			user.GetId(), color, user.PositionX, user.PositionY, user.Speed, user.Direction, user.Direction, user.Life))
 
 	}
 

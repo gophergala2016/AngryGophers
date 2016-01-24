@@ -202,9 +202,29 @@
         // y = 10;
         users = [];
         bullets = [];
-        scores = false;
+        scores = [];
         for (k in datalist) {
           parseLine(datalist[k]);
+        }
+        if (scores.length > 0)
+        {
+          score = document.getElementById("score");
+          var str = '<table><tr><td colspan="3"><b>TOP scores</b></td></tr>';
+          str += '<tr><td>Nick</td><td>Score</td><td>HP</td></tr>';
+          for(k in scores)
+          {
+            hpInfo = "";
+            if (typeof users[scores[k].user] != 'undefined')
+            {
+              hpInfo = users[scores[k].user].hp;
+            }
+            str += "<tr><td style='width:100px;'>" + userNames[scores[k].user] + "</td>";
+            str += "<td style='width:100px;'>" + scores[k].point +"</td>";
+            str += "<td class='hp_"+scores[k].user+"' style='width:100px;'>" + hpInfo + "</td></tr>";
+          }
+
+          console.log(users);
+          score.innerHTML = str+"</table>";
         }
       };
 
@@ -219,8 +239,10 @@
                 posX: parseFloat(data[3]), 
                 posY: parseFloat(data[4]), 
                 speed: parseFloat(data[5]), 
+                hp: parseFloat(data[8]), 
                 color: data[2],
                 direction: parseFloat(data[6])};
+                $('.hp_' + data[1]).html(data[8]);
               break;
             case 'B':
               bullets.push({
@@ -238,21 +260,7 @@
               }
               break;
             case 'S':
-              score = document.getElementById("score");
-              var str = '';
-              if (scores == true)
-              {
-                str = score.innerHTML;
-              }
-              else
-              {
-                str = '<b>TOP scores</b><br>';
-              }
-              scores = true;
-              console.log(users);
-              console.log(data);
-              str += userNames[data[1]] + " - " + data[2] + "<br />";
-              score.innerHTML = str;
+              scores.push({user:data[1],point: data[2]});
               break;
             case 'E':
               var smoke = Sprite({
@@ -268,9 +276,29 @@
               smokeList.push(smoke);
               soundExplosion.cloneNode().play();
               break;
-            case 'TREE':
+            case 'MT':
+              var tree = EnvObj({
+                context: ctx,
+                width: 87,
+                height: 87,
+                image: treeImage,
+                x: Math.floor((Math.random() * 800) + 1),
+                y: Math.floor((Math.random() * 800) + 1)
+              });
+
+              treeList.push(tree);
               break;
-            case 'ROCK':
+            case 'MR':
+              var rock = EnvObj({
+                context: ctx,
+                width: 43,
+                height: 43,
+                image: rockImage,
+                x: Math.floor((Math.random() * 800) + 1),
+                y: Math.floor((Math.random() * 800) + 1)
+              });
+
+              rockList.push(rock);
               break;
             case 'POWERUP':
               break;
@@ -488,8 +516,8 @@
       setInterval(draw, 1000/refreshrate);
       // setInterval(generateRandomSmoke, 500);
 
-      generateRandomObjects("tree", 1);
-      generateRandomObjects("rock", 2);
+      // generateRandomObjects("tree", 1);
+      // generateRandomObjects("rock", 2);
 
       console.log(treeList);
       console.log(rockList);

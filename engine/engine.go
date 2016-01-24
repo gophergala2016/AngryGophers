@@ -1,8 +1,6 @@
 package engine
 
-import (
-	"sync/atomic"
-)
+import "sync/atomic"
 
 const canvasSizeX float32 = 800
 const canvasSizeY float32 = 800

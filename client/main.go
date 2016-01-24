@@ -135,8 +135,9 @@ func main() {
 	
 	ReadFromWebsocket := func(ws *websocket.Conn) {
 		closeWs := make(chan bool)
+		closeWs2 := make(chan bool)
 		go receiveServerMessages(ws, closeWs)
-		go manageWebSocket(ws, closeWs)
+		go manageWebSocket(ws, closeWs2)
 	forLoop:
 		for {
 			msg := make([]byte, 100)
@@ -144,6 +145,7 @@ func main() {
 
 			if err != nil {
 				closeWs <- true
+				closeWs2 <- true
 				break forLoop
 			}
 			messageToSend := msg[:n]

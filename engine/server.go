@@ -105,6 +105,8 @@ func (s *Server) SendAllClient(cId int, ws *websocket.Conn) {
 	s.scoreRead()
 	s.explosionRead()
 	s.smokeRead()
+	s.newBullet = false
+	s.newHit = false
 	s.changesServer = false
 }
 

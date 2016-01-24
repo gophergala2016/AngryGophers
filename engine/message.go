@@ -108,17 +108,17 @@ forUser:
 
 	}
 
-	if self.explosion.show {
+	if self.explosion.show || firstAnswer {
 		for _, point := range self.explosion.position {
 			result.WriteString(fmt.Sprintf("E;%.0f;%.0f;\n", point.x, point.y))
 		}
 	}
-	if self.score.change {
+	if self.score.change || firstAnswer {
 		for id, point := range self.score.client {
 			result.WriteString(fmt.Sprintf("S;%d;%d;\n", id, point))
 		}
 	}
-	if self.changesServer {
+	if self.changesServer || firstAnswer {
 		for _, user := range self.clients {
 			result.WriteString(fmt.Sprintf("U;%d;%s;\n",
 				user.GetId(), user.GetNick()))

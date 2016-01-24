@@ -52,6 +52,7 @@ func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId stri
 	maxId = int(atomic.AddInt32(&server.userId, 1))
 	position := firstPosition[maxId%4]
 	server.changesServer = true
+	server.scoreNewClient(maxId)
 	return &Client{
 		maxId,
 		nick,

@@ -5,6 +5,11 @@ type Scores struct {
 	client map[int]int
 }
 
+func (s *Server) scoreNewClient(clientId int) {
+	s.score.change = true
+	s.score.client[clientId] = 0
+}
+
 func (s *Server) scoreAdd(clientId int) {
 	s.score.change = true
 	s.score.client[clientId]++

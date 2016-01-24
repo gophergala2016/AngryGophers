@@ -43,7 +43,8 @@ func NewServer(conn *net.UDPConn) *Server {
 	var score Scores
 	score.client = make(map[int]int)
 
-	m := GetMap(Mapa1, SpeedGround1, canvasSizeX, canvasSizeY)
+	//m := GetMap(Mapa1, SpeedGround1, canvasSizeX, canvasSizeY)
+	m := GetMap(Mapa2, SpeedGround1, canvasSizeX, canvasSizeY)
 	var reqId int32 = 0
 	var userId int32 = 1
 	s := &Server{

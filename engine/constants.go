@@ -1,6 +1,6 @@
 package engine
 
-var SpeedGround1 []int = []int{10, 0, 10, 30, 3}
+var SpeedGround1 []int = []int{10, 0, 10, 30, 3, 10, 6}
 var Mapa1 [][]int = [][]int{
 	[]int{2, 2, 2, 0, 0, 2, 0, 1, 2, 0, 0, 2, 0, 2, 0, 2},
 	[]int{0, 2, 0, 0, 2, 0, 2, 1, 2, 2, 0, 2, 0, 2, 2, 0},
@@ -20,12 +20,31 @@ var Mapa1 [][]int = [][]int{
 	[]int{2, 2, 2, 0, 2, 0, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
 }
 
+var Mapa2 [][]int = [][]int{
+	[]int{0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0, 0}, // 1
+	[]int{0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0, 0}, // 2
+	[]int{0, 0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0}, // 3
+	[]int{0, 0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0}, // 4
+	[]int{3, 0, 0, 5, 2, 2, 6, 1, 4, 4, 4, 1, 6, 2, 0, 3}, // 5
+	[]int{3, 3, 0, 5, 2, 2, 6, 1, 4, 4, 4, 1, 0, 0, 3, 3}, // 6
+	[]int{3, 3, 0, 5, 2, 6, 1, 4, 0, 4, 1, 0, 0, 0, 3, 3}, // 7
+	[]int{3, 3, 0, 5, 2, 6, 1, 4, 0, 4, 1, 0, 0, 0, 3, 3}, // 8
+	[]int{3, 3, 0, 0, 0, 1, 4, 0, 4, 1, 6, 2, 5, 0, 3, 3}, // 9
+	[]int{3, 3, 0, 0, 0, 1, 4, 0, 4, 1, 6, 2, 5, 0, 3, 3}, // 10
+	[]int{3, 3, 0, 0, 1, 4, 4, 4, 1, 6, 2, 2, 5, 0, 3, 3}, // 11
+	[]int{3, 0, 2, 6, 1, 4, 4, 4, 1, 6, 2, 2, 5, 0, 0, 3}, // 12
+	[]int{0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0, 0}, // 13
+	[]int{0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0, 0}, // 14
+	[]int{0, 0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0}, // 15
+	[]int{0, 0, 0, 0, 5, 2, 2, 4, 4, 4, 2, 2, 5, 0, 0, 0}, // 16
+}
+
 const FramePerSec int64 = 30
 const TimePerFrame int64 = 1000000 / FramePerSec
 
 const ClientFramePerSec int64 = 60
 const ClientTimePerFrame int64 = 1000000 / ClientFramePerSec
-const ClientToServerRatio float32 = float32(float32(FramePerSec)/float32(ClientFramePerSec))
+const ClientToServerRatio float32 = float32(float32(FramePerSec) / float32(ClientFramePerSec))
 
 var TreeList1 [][]int = [][]int{
 	[]int{288, 478},

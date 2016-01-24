@@ -332,6 +332,7 @@
     var soundHit = [new Audio("./resources/Sounds/hit1.mp3").cloneNode(), new Audio("./resources/Sounds/hit2.mp3").cloneNode()];
     var soundFire = new Audio("./resources/Sounds/fire.mp3").cloneNode();
     var soundTank1 = new Audio("./resources/Sounds/tank1.mp3").cloneNode();
+    var soundDeath = [new Audio("./resources/Sounds/you_are_death1.mp3").cloneNode(), new Audio("./resources/Sounds/you_are_death2.mp3").cloneNode()];
 
     var treeImage = new Image();
     var treeList = [];
@@ -533,6 +534,7 @@
                 $('#respawnCountdown').show();
                 $('#respawnCountdown').html(3);
                 $('#respawn').hide();
+                soundDeath[Math.floor(Math.random()*soundDeath.length)].play();
                 setTimeout(function(){$('#respawnCountdown').html(2);}, 1000);
                 setTimeout(function(){$('#respawnCountdown').html(1);}, 2000);
                 setTimeout(function(){

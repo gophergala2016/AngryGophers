@@ -72,6 +72,12 @@ forLoop:
 		if c.LastFire > 0 {
 			c.LastFire--
 		}
+		if c.Smoke > 0 && c.Smoke <= 150 {
+			if c.Smoke >= 100 && (c.Smoke%10) == 0 {
+				s.smokeAdd(c.PositionX, c.PositionY)
+			}
+			c.Smoke--
+		}
 
 	}
 }

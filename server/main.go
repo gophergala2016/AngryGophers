@@ -45,7 +45,7 @@ func main() {
 			actualTime := time.Now().UnixNano()
 
 			server.SendAll()
-			log.Print("timeNow", time.Now())
+			//			log.Print("timeNow", time.Now())
 
 			differenceTime := (time.Now().UnixNano() - actualTime) / 1000 //microseconds
 			//log.Print(differenceTime)

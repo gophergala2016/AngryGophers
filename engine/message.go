@@ -34,6 +34,12 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 		tmp.Fire = true
 	case "fire2":
 		tmp.Fire = false
+	case "smoke":
+		if tmp.Smoke == 0 {
+			tmp.Smoke = 150
+		}
+	// case "smoke2":
+	// 	tmp.Smoke = false
 	case "right":
 		tmp.Direction = 90
 		tmp.Moving = true
@@ -111,6 +117,11 @@ forUser:
 	if self.explosion.show || firstAnswer {
 		for _, point := range self.explosion.position {
 			result.WriteString(fmt.Sprintf("E;%.0f;%.0f;\n", point.x, point.y))
+		}
+	}
+	if self.smoke.show || firstAnswer {
+		for _, point := range self.smoke.position {
+			result.WriteString(fmt.Sprintf("SMOKE;%.0f;%.0f;\n", point.x, point.y))
 		}
 	}
 	if self.score.change || firstAnswer {

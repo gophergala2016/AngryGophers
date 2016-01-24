@@ -17,6 +17,7 @@ type Server struct {
 	clients       map[string]*Client
 	bullets       []*Bullet
 	explosion     Explosion
+	smoke         Smoke
 	addCh         chan *Client
 	doneCh        chan bool
 	errCh         chan error
@@ -28,6 +29,7 @@ type Server struct {
 func NewServer(conn *net.UDPConn) *Server {
 	var bullets []*Bullet
 	explosion := Explosion{}
+	smoke := Smoke{}
 	clients := make(map[string]*Client)
 	addCh := make(chan *Client)
 	doneCh := make(chan bool)
@@ -45,6 +47,7 @@ func NewServer(conn *net.UDPConn) *Server {
 		clients,
 		bullets,
 		explosion,
+		smoke,
 		addCh,
 		doneCh,
 		errCh,
@@ -78,6 +81,7 @@ func (s *Server) SendAll() {
 	}
 	s.scoreRead()
 	s.explosionRead()
+	s.smokeRead()
 	s.changesServer = false
 }
 

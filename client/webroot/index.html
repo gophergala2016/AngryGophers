@@ -22,6 +22,7 @@
 
     <script type="text/javascript">
       var keySpacePressed = false;
+      var keyCtrlPressed = false;
       var keyUpPressed = false;
       var keyDownPressed = false;
       var keyLeftPressed = false;
@@ -32,6 +33,12 @@
 
       function doKeyDown(evt){
         switch (evt.keyCode) {
+          case 17:
+            if (!keyCtrlPressed) {
+              keyCtrlPressed = true;
+              websocketAction('smoke');
+            }
+            break;
           case 32:
             if (!keySpacePressed) {
               // pressed.push("fire");
@@ -74,6 +81,12 @@
       function doKeyUp(evt){
         var direction;
         switch (evt.keyCode) {
+          case 17:
+            if (keyCtrlPressed) {
+              websocketAction('smoke2');
+              keyCtrlPressed = false;
+            }
+          break;
           case 32:
             if (keySpacePressed) {
               // direction = "fire2";
@@ -530,7 +543,7 @@
         height: 128,
         image: smokeImage,
         numberOfFrames: 10,
-        ticksPerFrame: 30,
+        ticksPerFrame: 20,
         x: Math.floor((Math.random() * 800) + 1),
         y: Math.floor((Math.random() * 800) + 1)
       });

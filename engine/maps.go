@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type mapa struct {
+type Mapa struct {
 	ground      [][]int
 	speedPoint  [][]int
 	speedGround []int
@@ -30,20 +30,20 @@ func (s *Server) getCollision(x, y float32) bool {
 	return s.mapa.speedPoint[int(x)][int(y)] == 0
 }
 
-func (s *mapa) drawMap() ([][]int, []int) {
+func (s *Mapa) drawMap() ([][]int, []int) {
 	return s.ground, s.speedGround
 }
 
-func (s *mapa) GetTrees() [][]int {
+func (s *Mapa) GetTrees() [][]int {
 	return s.trees
 }
 
-func (s *mapa) GetRocks() [][]int {
+func (s *Mapa) GetRocks() [][]int {
 	return s.rocks
 }
 
-func getMap(ground [][]int, speedGround []int, mapSizeX, mapSizeY float32) *mapa {
-	s := &mapa{}
+func GetMap(ground [][]int, speedGround []int, mapSizeX, mapSizeY float32) *Mapa {
+	s := &Mapa{}
 	s.ground = ground
 	s.speedGround = speedGround
 
@@ -79,36 +79,6 @@ func getMap(ground [][]int, speedGround []int, mapSizeX, mapSizeY float32) *mapa
 		s.rocks = append(s.rocks, []int{x, y})
 	}
 
-	// // woda
-	// for x := 280; x < 380; x++ {
-	// 	for y := 580; y < 800; y++ {
-	// 		res[x][y] = 3
-	// 	}
-	// }
-	// // lod
-	// for x := 280; x < 380; x++ {
-	// 	for y := 280; y < 480; y++ {
-	// 		res[x][y] = 30
-	// 	}
-	// }
-	// // lod
-	// for x := 380; x < 480; x++ {
-	// 	for y := 280; y < 380; y++ {
-	// 		res[x][y] = 30
-	// 	}
-	// }
-	// // drzewo
-	// for x := 167; x < 396; x++ {
-	// 	for y := 67; y < 200; y++ {
-	// 		res[x][y] = 0
-	// 	}
-	// }
-	// // drzewo
-	// for x := 267; x < 396; x++ {
-	// 	for y := 0; y < 67; y++ {
-	// 		res[x][y] = 0
-	// 	}
-	// }
 	s.speedPoint = res
 	return s
 }

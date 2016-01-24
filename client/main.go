@@ -21,6 +21,7 @@ var serverMsg chan []byte
 var requestCounter int32 = 0
 var waitingRequests map[int32][]byte
 var client engine.Client
+var currentMap *engine.Mapa = &engine.Mapa{}
 
 //// CLIENT ////////
 func sendMessage(msg []byte) {
@@ -68,7 +69,23 @@ func manageWebSocket(ws *websocket.Conn) {
 					delete(waitingRequests, int32(key))
 				}
 			case "F":
-//				log.Println(serverMessageString[2])
+				//				log.Println(serverMessageString[2])
+				lines := strings.Split(serverMessageString[2], "\n")
+				for _, line := range lines {
+
+					if len(line) > 0 {
+						cols := strings.Split(line, ";")
+						switch cols[0] {
+						case "M":
+							switch cols[1] {
+							case "1":
+								currentMap = engine.GetMap(engine.Mapa1, engine.SpeedGround1, 800, 800)
+							}
+						}
+					}
+
+				}
+
 				_, err := ws.Write([]byte(serverMessageString[2]))
 				CheckError(err)
 

@@ -21,7 +21,7 @@ type Server struct {
 	doneCh        chan bool
 	errCh         chan error
 	score         Scores
-	mapa          *mapa
+	mapa          *Mapa
 	changesServer bool
 }
 
@@ -35,27 +35,7 @@ func NewServer(conn *net.UDPConn) *Server {
 	var score Scores
 	score.client = make(map[int]int)
 
-	var speedGround []int = []int{10, 0, 10, 30, 3}
-	var mapa1 [][]int = [][]int{
-		[]int{2, 2, 2, 0, 0, 2, 0, 1, 2, 0, 0, 2, 0, 2, 0, 2},
-		[]int{0, 2, 0, 0, 2, 0, 2, 1, 2, 2, 0, 2, 0, 2, 2, 0},
-		[]int{0, 2, 0, 0, 2, 2, 2, 1, 2, 0, 2, 2, 0, 2, 0, 2},
-		[]int{0, 2, 0, 0, 2, 0, 2, 1, 2, 0, 0, 2, 0, 2, 0, 2},
-		[]int{3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 3},
-		[]int{3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 3},
-		[]int{3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 3},
-		[]int{3, 0, 0, 0, 0, 4, 4, 0, 0, 4, 4, 0, 0, 0, 0, 3},
-		[]int{3, 0, 0, 0, 0, 4, 4, 0, 0, 4, 4, 0, 0, 0, 0, 3},
-		[]int{3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 3},
-		[]int{3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 3},
-		[]int{3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 3},
-		[]int{0, 2, 0, 0, 0, 2, 0, 1, 2, 0, 0, 2, 0, 2, 2, 2},
-		[]int{2, 0, 0, 0, 2, 0, 2, 1, 2, 2, 2, 2, 0, 2, 0, 0},
-		[]int{2, 2, 2, 0, 2, 2, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
-		[]int{0, 2, 2, 0, 2, 0, 2, 1, 2, 0, 0, 2, 0, 2, 2, 2},
-	}
-
-	m := getMap(mapa1, speedGround, canvasSizeX, canvasSizeY)
+	m := GetMap(Mapa1, SpeedGround1, canvasSizeX, canvasSizeY)
 	var reqId int32 = 0
 	var userId int32 = 1
 	s := &Server{

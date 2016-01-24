@@ -70,20 +70,9 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 	var result bytes.Buffer
 	if firstAnswer {
-		x, speeds, name := self.mapa.drawMap()
+		name := self.mapa.drawMap()
 		result.WriteString("MN;" + name + ";\n")
-		for _, v := range x {
-			result.WriteString("M;")
-			for _, v2 := range v {
-				result.WriteString(strconv.Itoa(v2) + ";")
-			}
-			result.WriteString("\n")
-		}
-		result.WriteString("MS;")
-		for _, v := range speeds {
-			result.WriteString(strconv.Itoa(v) + ";")
-		}
-		result.WriteString("\n")
+
 
 		for _, v := range self.mapa.GetTrees() {
 			result.WriteString(fmt.Sprintf("MT;%d;%d;\n", v[0], v[1]))
@@ -158,7 +147,8 @@ kolor R G B K
 
 */
 
-func (s *Server) ParseMsgFromServerToStruct(msg string, clientId int) {
+func (s *Server) ParseMsgFromServerToStruct(msg string, clientId int) bool {
+	gotMap := false
 	var tmpBullets []*Bullet
 	var tmpExplosion []*Position
 	var tmpSmoke []*Position
@@ -282,13 +272,16 @@ forline:
 			}
 			tmpScore[id] = point
 			
-		case "M":
+		case "MN":
 			id, err := strconv.Atoi(data[1])
 			if err != nil {
+				log.Println("sdfsdsdas")
 				continue forline
 			}
 			switch id {
 				case 1:
+				log.Println("got map")
+				gotMap = true
 				s.SetMap(Mapa1, SpeedGround1)
 			}
 			
@@ -323,4 +316,5 @@ forline:
 			s.clients[k].nick = tmpUserNick[c.id]
 		}
 	}
+	return gotMap
 }

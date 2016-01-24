@@ -41,8 +41,13 @@ func manageMessages() {
 	}
 }
 
-func receiveServerMessages() {
+func receiveServerMessages(ws *websocket.Conn, closeWs chan bool) {
 	for {
+		select {
+		case <-closeWs:
+			return
+		default:
+		}
 		serverMessage := <-serverMsg
 		serverMessageString := strings.SplitN(string(serverMessage), ";", 3)
 		if len(serverMessageString) == 3 {
@@ -77,7 +82,14 @@ func receiveServerMessages() {
 				}
 			case "F":
 				if cId := client.GetId(); cId > 0 {
-					server.ParseMsgFromServerToStruct(serverMessageString[2], client.GetId())
+					log.Println(serverMessageString)
+					sendMap := server.ParseMsgFromServerToStruct(serverMessageString[2], client.GetId())
+					
+					if sendMap {
+						log.Println("sdfsd")
+						_, err := ws.Write([]byte(serverMessageString[2]))
+						CheckError(err)
+					}
 				}
 
 			}
@@ -93,17 +105,19 @@ func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
 			return
 		default:
 		}
-		actualTime := time.Now().UnixNano()
-		server.CalcAll(true)
-		server.SendAllClient(client.GetId(), ws)
-		//			log.Print("timeNow", time.Now())
-
-		differenceTime := (time.Now().UnixNano() - actualTime) / 1000 //microseconds
-		//log.Print(differenceTime)
-		if differenceTime < engine.ClientTimePerFrame {
-			//	log.Println("Sleeep", int64((timePerFrame-differenceTime)/1000))
-			//	log.Println(time.Duration(timePerFrame-differenceTime) * time.Microsecond)
-			time.Sleep(time.Duration(engine.ClientTimePerFrame - differenceTime) * time.Microsecond)
+		if cId := client.GetId(); cId > 0 {
+			actualTime := time.Now().UnixNano()
+			server.CalcAll(true)
+			server.SendAllClient(client.GetId(), ws)
+			//			log.Print("timeNow", time.Now())
+	
+			differenceTime := (time.Now().UnixNano() - actualTime) / 1000 //microseconds
+			//log.Print(differenceTime)
+			if differenceTime < engine.ClientTimePerFrame {
+				//	log.Println("Sleeep", int64((timePerFrame-differenceTime)/1000))
+				//	log.Println(time.Duration(timePerFrame-differenceTime) * time.Microsecond)
+				time.Sleep(time.Duration(engine.ClientTimePerFrame - differenceTime) * time.Microsecond)
+			}
 		}
 	}
 }
@@ -123,6 +137,7 @@ func main() {
 	
 	ReadFromWebsocket := func(ws *websocket.Conn) {
 		closeWs := make(chan bool)
+		go receiveServerMessages(ws, closeWs)
 		go manageWebSocket(ws, closeWs)
 	forLoop:
 		for {
@@ -169,7 +184,6 @@ func main() {
 	CheckError(err)
 	defer conn.Close()
 	go manageMessages()
-	go receiveServerMessages()
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

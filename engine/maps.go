@@ -29,8 +29,8 @@ func (s *Server) getCollision(x, y float32) bool {
 	return s.mapa.speedPoint[int(x)][int(y)] == 0
 }
 
-func (s *Mapa) drawMap() ([][]int, []int, string) {
-	return s.ground, s.speedGround, s.name
+func (s *Mapa) drawMap() ( string) {
+	return s.name
 }
 
 func (s *Mapa) GetTrees() [][]int {
@@ -43,7 +43,7 @@ func (s *Mapa) GetRocks() [][]int {
 
 func GetMap(ground [][]int, speedGround []int, mapSizeX, mapSizeY float32) *Mapa {
 	s := &Mapa{}
-	s.name = "Mapa1"
+	s.name = "1"
 	s.ground = ground
 	s.speedGround = speedGround
 

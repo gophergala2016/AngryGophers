@@ -1,5 +1,9 @@
 package engine
 
+import (
+	"log"
+)
+
 const canvasSizeX float32 = 800
 const canvasSizeY float32 = 800
 const canvasMapX float32 = 16
@@ -8,7 +12,7 @@ const canvasMapY float32 = 16
 func (s *Server) CalcAll(isClient bool) {
 	tmp := refreshModifier
 	if isClient {
-		refreshModifier = ClientToServerRation
+		refreshModifier = ClientToServerRatio
 	}
 	s.checkBulletsOnMap(canvasSizeX, canvasSizeY, refreshModifier)
 
@@ -25,10 +29,8 @@ forLoop:
 				c.SetDeath(true, 0, 0)
 				s.explosionAdd(c.PositionX, c.PositionY)
 				s.scoreAdd(hitClientId)
-				// s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
+				s.sendResponse("MAP", c.RemoteAddr, s.BuildAnswer(c.id, false))
 				continue forLoop
-			} else {
-				s.newHit = true
 			}
 		}
 
@@ -36,6 +38,7 @@ forLoop:
 		// var speed = c.Speed * refreshModifier
 		if c.Moving {
 			speed = s.setSpeedTank(c, refreshModifier)
+//			log.Println(speed)
 			newPositionX := c.PositionX
 			newPositionY := c.PositionY
 			switch c.Direction {

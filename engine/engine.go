@@ -1,9 +1,5 @@
 package engine
 
-import (
-	"log"
-)
-
 const canvasSizeX float32 = 800
 const canvasSizeY float32 = 800
 const canvasMapX float32 = 16
@@ -38,7 +34,7 @@ forLoop:
 		// var speed = c.Speed * refreshModifier
 		if c.Moving {
 			speed = s.setSpeedTank(c, refreshModifier)
-//			log.Println(speed)
+			//			log.Println(speed)
 			newPositionX := c.PositionX
 			newPositionY := c.PositionY
 			switch c.Direction {

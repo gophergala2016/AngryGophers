@@ -339,6 +339,7 @@
 
     var rockImage = new Image();
     var rockList = [];
+    var power = null;
 
     var userNames = [];
      
@@ -460,7 +461,15 @@
 
               rockList.push(rock);
               break;
-            case 'POWERUP':
+            case 'POWER':
+              power = EnvObj({
+                context: ctx,
+                width: 43,
+                height: 43,
+                image: rockImage,
+                x: data[1],
+                y: data[2]
+              });
               break;
             case 'SMOKE':
               var smoke = Sprite({
@@ -755,6 +764,11 @@
           continue;
         }
         rockList[k].render();
+      }
+
+      if(power) {
+        power.render()
+
       }
 
       for (k in treeList) {

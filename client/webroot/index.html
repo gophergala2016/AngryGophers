@@ -305,8 +305,8 @@
     var TO_RADIANS = Math.PI / 180;
     
     var tanksPath = "./resources/Tanks/";
-    var tanksList = ["tankBlack.png", "tankBlue.png", "tankGreen.png", "tankRed.png"];
-    var barrelList = ["barrelBlack.png", "barrelBlue.png", "barrelGreen.png", "barrelRed.png"];
+    var tanksList = ["tankBlack_outline.png", "tankBlue_outline.png", "tankGreen_outline.png", "tankRed_outline.png"];
+    var barrelList = ["barrelBlack_outline.png", "barrelBlue_outline.png", "barrelGreen_outline.png", "barrelRed_outline.png"];
     
     var bulletPath = "./resources/Bullets/";
     var bulletList = ["bulletBeige.png"];
@@ -354,6 +354,7 @@
         users = [];
         bullets = [];
         scores = [];
+
         for (k in datalist) {
           parseLine(datalist[k]);
         }
@@ -403,7 +404,7 @@
             scoreStr += '<tr id="player-score-' + scores[k].user + '" data-id="' + scores[k].point + '">';
             scoreStr += '<td style="width: 400px; text-align: left;">' + userNames[scores[k].user] + '</td>';
             scoreStr += '<td style="width: 200px; text-align: center;">' + scores[k].point + '</td>';
-            scoreStr += '<td class="hp_'+scores[k].user+'" style="width: 200px; text-align: center;">' + hpInfo + '</td>';
+            scoreStr += '<td class="hp_' + scores[k].user + '" style="width: 200px; text-align: center;">' + hpInfo + '</td>';
             scoreStr += '</tr>';
           }
 
@@ -689,11 +690,11 @@
       // and height of the image 
       switch (t) {
         case "tank":
-          ctx.drawImage(tanksImages[index], 0, 0, 75, 70, -w/2, -h/2, w, h);
-      ctx.drawImage(barrelImages[index], 0, 0, 16, 50, -8/2, -25/2 - 10, 8, 25);
+          ctx.drawImage(tanksImages[index], 0, 0, 83, 78, -w/2, -h/2, w, h);
+          ctx.drawImage(barrelImages[index], 0, 0, 24, 58, -8/2, -25/2 - 10, 8, 25);
           break;
         case "bullet":
-      ctx.drawImage(bulletImages[0], 0, 0, 12, 26, -w/2, -h/2, w, h);
+          ctx.drawImage(bulletImages[0], 0, 0, 12, 26, -w/2, -h/2, w, h);
           break;
       }
       

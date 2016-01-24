@@ -124,9 +124,18 @@ func main() {
 				closeWs <- true
 				break forLoop
 			}
-			msgId := atomic.AddInt32(&requestCounter, 1)
 			messageToSend := msg[:n]
+			if string(messageToSend) == "check" && client.GetNick() == "" {
+				continue forLoop
+			}
+			
+			msgId := atomic.AddInt32(&requestCounter, 1)
+			
 			go func(messageToSend []byte, msgId int32) {
+				if string(messageToSend) == "check" && client.GetNick() != "" {
+					messageToSend = []byte("login;" + client.GetNick())
+				}
+				
 				waitingRequests[msgId] = messageToSend
 				for waitingRequests[msgId] != nil {
 					toSend := []byte(fmt.Sprintf("%d;", msgId))

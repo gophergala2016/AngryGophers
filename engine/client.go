@@ -68,7 +68,7 @@ func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId stri
 		fullLife,
 		false,
 		defaultDirection,
-		defaultTankSpeed,
+		0,
 		false,
 		false,
 		0,

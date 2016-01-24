@@ -83,6 +83,7 @@ func receiveServerMessages(ws *websocket.Conn, closeWs chan bool) {
 				}
 			case "F":
 //				if clientId > 0 {
+//	log.Println(clientId)
 					sendMap := server.ParseMsgFromServerToStruct(serverMessageString[2], clientId)
 					
 					if sendMap {

@@ -44,6 +44,7 @@
             if (!keySpacePressed) {
               // pressed.push("fire");
               keySpacePressed = true;
+              soundFire.cloneNode().play();
               // websocketAction("fire");
               websocketAction('fire');
             }
@@ -51,6 +52,7 @@
           case 38:
             if (!keyUpPressed) {
               pressed.push("up");
+              // soundTank1.cloneNode().play();
               keyUpPressed = true;
               websocketAction("up");
             }
@@ -203,6 +205,9 @@
     // var websocket = new WebSocket("ws://localhost:8080/entry");
 
     var soundExplosion = new Audio("./resources/Sounds/explosion.mp3");
+    var soundHit = [new Audio("./resources/Sounds/hit1.mp3"), new Audio("./resources/Sounds/hit2.mp3")];
+    var soundFire = new Audio("./resources/Sounds/fire.mp3");
+    var soundTank1 = new Audio("./resources/Sounds/tank1.mp3");
 
     var treeImage = new Image();
     var treeList = [];
@@ -297,6 +302,7 @@
               });
               smokeList.push(smoke);
               soundExplosion.cloneNode().play();
+              soundHit[Math.floor(Math.random()*soundHit.length)].cloneNode().play();
               break;
             case 'MT':
               var tree = EnvObj({

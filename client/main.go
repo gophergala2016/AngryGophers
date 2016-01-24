@@ -171,7 +171,7 @@ func main() {
 				for waitingRequests[msgId] != nil {
 					toSend := []byte(fmt.Sprintf("%d;", msgId))
 					sendMessage(append(toSend, messageToSend...))
-					<-time.After(time.Second * 2)
+					<-time.After(time.Second)
 				}
 			}(messageToSend, msgId)
 		}

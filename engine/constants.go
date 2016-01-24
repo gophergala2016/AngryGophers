@@ -22,3 +22,22 @@ var Mapa1 [][]int = [][]int{
 
 const FramePerSec int64 = 30
 const TimePerFrame int64 = 1000000 / FramePerSec
+var TreeList1 [][]int = [][]int{
+	[]int{288, 478},
+	[]int{303, 140},
+	[]int{418, 638},
+	[]int{709, 786},
+}
+
+var RockList1 [][]int = [][]int{
+	[]int{331, 743},
+	[]int{309, 258},
+	[]int{766, 82},
+	[]int{424, 438},
+	[]int{759, 332},
+	[]int{11, 484},
+	[]int{153, 240},
+	[]int{474, 20},
+	[]int{372, 673},
+	[]int{211, 157},
+}

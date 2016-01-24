@@ -2,8 +2,6 @@ package engine
 
 import (
 	"log"
-	"math/rand"
-	"time"
 )
 
 type Mapa struct {
@@ -63,21 +61,8 @@ func GetMap(ground [][]int, speedGround []int, mapSizeX, mapSizeY float32) *Mapa
 		}
 	}
 
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
-	cntTree := r.Intn(20)
-	for i := 0; i < cntTree; i++ {
-		x := (r.Intn(int(mapSizeX)))
-		y := (r.Intn(int(mapSizeY)))
-		s.trees = append(s.trees, []int{x, y})
-	}
-
-	cntRock := r.Intn(20)
-	for i := 0; i < cntRock; i++ {
-		x := (r.Intn(int(mapSizeX)))
-		y := (r.Intn(int(mapSizeY)))
-		s.rocks = append(s.rocks, []int{x, y})
-	}
+	s.trees = TreeList1
+	s.rocks = RockList1
 
 	s.speedPoint = res
 	return s

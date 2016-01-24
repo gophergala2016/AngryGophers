@@ -542,7 +542,10 @@
               }
               break;
             case 'U':
-              userNames[data[1]] = data[2];
+              if (!userNames[data[1]])
+              {
+                userNames[data[1]] = data[2];
+              }
               break;
           }
         }

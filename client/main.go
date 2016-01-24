@@ -39,8 +39,13 @@ func manageMessages() {
 	}
 }
 
-func manageWebSocket(ws *websocket.Conn) {
+func manageWebSocket(ws *websocket.Conn, closeWs chan bool) {
 	for {
+		select {
+		case <-closeWs:
+			return
+		default:
+		}
 		serverMessage := <-serverMsg
 		serverMessageString := strings.SplitN(string(serverMessage), ";", 3)
 		// log.Println(serverMessageString)
@@ -91,7 +96,6 @@ func manageWebSocket(ws *websocket.Conn) {
 
 			}
 		}
-
 		//		_, err := ws.Write(serverMessage)
 		//		CheckError(err)
 	}
@@ -104,19 +108,20 @@ func CheckError(err error) {
 }
 
 func main() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	client = engine.Client{}
 	serverMsg = make(chan []byte)
 	waitingRequests = make(map[int32][]byte)
-	log.SetFlags(log.Lshortfile)
 	ReadFromWebsocket := func(ws *websocket.Conn) {
-		go manageWebSocket(ws)
+		closeWs := make(chan bool)
+		go manageWebSocket(ws, closeWs)
 	forLoop:
 		for {
 			msg := make([]byte, 100)
 			n, err := ws.Read(msg)
 
 			if err != nil {
-				log.Println(err)
+				closeWs <- true
 				break forLoop
 			}
 			msgId := atomic.AddInt32(&requestCounter, 1)
@@ -129,9 +134,7 @@ func main() {
 					<-time.After(time.Second * 2)
 				}
 			}(messageToSend, msgId)
-
 		}
-
 	}
 	http.Handle("/echo", websocket.Handler(ReadFromWebsocket))
 

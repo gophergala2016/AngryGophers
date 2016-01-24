@@ -46,6 +46,7 @@ func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId stri
 	tmp := server.clients[remoteAddr.String()] // users[clientId]
 	if tmp != nil {
 		server.sendResponse("LOGIN", remoteAddr, strconv.Itoa(tmp.GetId())+";"+reqId)
+		server.sendPastMessages(tmp)
 		return nil, tmp.GetId()
 	}
 

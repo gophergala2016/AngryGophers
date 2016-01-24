@@ -12,3 +12,10 @@ No one in our team has any experience in game development, but we decided that t
 
 Just compile and run client script that iss located in client folder.
 
+## key bindings
+movement          - arrows
+
+fire              - space
+
+create dust cloud - ctrl
+

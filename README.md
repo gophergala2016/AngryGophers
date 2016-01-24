@@ -14,7 +14,7 @@ Just compile and run client script that is located in client folder. The server 
 
 ## Running your server instance
 
-If you would like to run your own server instance, simply compile it and run.
+We have a public server running for this game. But, if you would like to run your own server instance, simply compile it and run.
 You would have to change host address in `client/main.go` for proper player connection.
 
 ``` go

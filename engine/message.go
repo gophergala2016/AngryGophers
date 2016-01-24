@@ -162,8 +162,12 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 		result.WriteString("HIT;\n")
 	}
 	if self.powerups.show || firstAnswer {
-		for _, p := range self.powerups.powerup {
-			result.WriteString(fmt.Sprintf("POWER;%.0f;%.0f;%d;\n", p.x, p.y, p.typ))
+		if len(self.powerups.powerup) == 0 {
+			result.WriteString("POWER;X;\n")
+		} else {
+			for _, p := range self.powerups.powerup {
+				result.WriteString(fmt.Sprintf("POWER;%.0f;%.0f;%d;\n", p.x, p.y, p.typ))
+			}
 		}
 	}
 	return result.String()
@@ -326,19 +330,24 @@ forline:
 			tmpUserNick[id] = data[2]
 
 		case "POWER":
-			x, err := strconv.ParseFloat(data[1], 32)
-			if err != nil {
-				continue forline
+			if data[1] == "X" {
+				s.powerups.powerup = []*Powerup{}
+				s.powerups.show = true
+			} else {
+				x, err := strconv.ParseFloat(data[1], 32)
+				if err != nil {
+					continue forline
+				}
+				y, err := strconv.ParseFloat(data[2], 32)
+				if err != nil {
+					continue forline
+				}
+				id, err := strconv.Atoi(data[3])
+				if err != nil {
+					continue forline
+				}
+				tmpPowerup = append(tmpPowerup, &Powerup{x: float32(x), y: float32(y), typ: id})
 			}
-			y, err := strconv.ParseFloat(data[2], 32)
-			if err != nil {
-				continue forline
-			}
-			id, err := strconv.Atoi(data[3])
-			if err != nil {
-				continue forline
-			}
-			tmpPowerup = append(tmpPowerup, &Powerup{x: float32(x), y: float32(y), typ: id})
 		}
 	}
 

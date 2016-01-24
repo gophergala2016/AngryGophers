@@ -403,7 +403,7 @@
             scoreStr += '<tr id="player-score-' + scores[k].user + '" data-id="' + scores[k].point + '">';
             scoreStr += '<td style="width: 400px; text-align: left;">' + userNames[scores[k].user] + '</td>';
             scoreStr += '<td style="width: 200px; text-align: center;">' + scores[k].point + '</td>';
-            scoreStr += '<td class='hp_"+scores[k].user+"' style="width: 200px; text-align: center;">' + hpInfo + '</td>';
+            scoreStr += '<td class="hp_'+scores[k].user+'" style="width: 200px; text-align: center;">' + hpInfo + '</td>';
             scoreStr += '</tr>';
           }
 
@@ -496,14 +496,21 @@
               rockList.push(rock);
               break;
             case 'POWER':
-              power = EnvObj({
-                context: ctx,
-                width: 43,
-                height: 43,
-                image: powerupImage,
-                x: data[1],
-                y: data[2]
-              });
+              if (data[1] === 'X')
+              {
+                power = null;
+              }
+              else
+              {
+                power = EnvObj({
+                  context: ctx,
+                  width: 43,
+                  height: 43,
+                  image: powerupImage,
+                  x: data[1],
+                  y: data[2]
+                });
+              }
               break;
             case 'SMOKE':
               var smoke = Sprite({

@@ -74,7 +74,6 @@ func (s *Server) sendPastMessages(c *Client) {
 }
 
 func (s *Server) SendAll() {
-	s.calcAll()
 	for _, c := range s.clients {
 		m := s.BuildAnswer(c.id, false)
 		s.sendResponse("F", c.RemoteAddr, m)

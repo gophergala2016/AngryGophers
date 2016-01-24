@@ -34,6 +34,20 @@ forLoop:
 			}
 		}
 
+		powerUpBool, powerUpId := s.checkPowerup(c.id, c.PositionX, c.PositionY, c.PositionX+tankWidth, c.PositionY+tankHeight)
+		if powerUpBool {
+			if powerUpId == 1 {
+				c.Powerup = 500 * int(refreshModifier)
+			}
+		}
+		if c.Powerup > 0 {
+			c.Speed = defaultTankSpeed * 5
+			c.Powerup--
+			if c.Powerup == 0 {
+				c.Speed = defaultTankSpeed
+			}
+		}
+
 		var speed float32
 		// var speed = c.Speed * refreshModifier
 		if c.Moving {
@@ -65,19 +79,6 @@ forLoop:
 					}
 				}
 				s.checkColision(c, newPositionX, newPositionY)
-			}
-		}
-		powerUpBool, powerUpId := s.checkPowerup(c.id, c.PositionX, c.PositionY, c.PositionX+tankWidth, c.PositionY+tankHeight)
-		if powerUpBool {
-			if powerUpId == 1 {
-				c.Speed = c.Speed * 10
-				c.Powerup = 5000
-			}
-		}
-		if c.Powerup > 0 {
-			c.Powerup--
-			if c.Powerup == 0 {
-				c.Speed = defaultTankSpeed
 			}
 		}
 

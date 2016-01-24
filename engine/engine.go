@@ -67,6 +67,19 @@ forLoop:
 				s.checkColision(c, newPositionX, newPositionY)
 			}
 		}
+		powerUpBool, powerUpId := s.checkPowerup(c.id, c.PositionX, c.PositionY, c.PositionX+tankWidth, c.PositionY+tankHeight)
+		if powerUpBool {
+			if powerUpId == 1 {
+				c.Speed = c.Speed * 2
+				c.Powerup = 50
+			}
+		}
+		if c.Powerup > 0 {
+			c.Powerup--
+			if c.Powerup == 0 {
+				c.Speed = defaultTankSpeed
+			}
+		}
 
 		if c.Fire {
 			if c.LastFire == 0 {

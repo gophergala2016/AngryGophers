@@ -29,7 +29,7 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 		s.sendResponse("OK", remoteaddr, idReq)
 		return
 	}
-	
+
 	UpdateClientData(tmp, msg)
 	s.clients[remoteaddr.String()] = tmp
 	s.sendResponse("OK", remoteaddr, idReq)
@@ -37,10 +37,10 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 
 func (s *Server) SelectClient(id int) *Client {
 	tmp := &Client{}
-	for _, client := range(s.clients) {
-		if x :=tmp.GetId(); x == id {
+	for _, client := range s.clients {
+		if x := tmp.GetId(); x == id {
 			tmp = client
-			break;
+			break
 		}
 	}
 	return tmp
@@ -89,17 +89,17 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 		result.WriteString("MN;" + name + ";\n")
 
 		for _, v := range x {
- 			result.WriteString("M;")
- 			for _, v2 := range v {
- 				result.WriteString(strconv.Itoa(v2) + ";")
- 			}
- 			result.WriteString("\n")
- 		}
- 		result.WriteString("MS;")
- 		for _, v := range speeds {
- 			result.WriteString(strconv.Itoa(v) + ";")
-  		}
-  		result.WriteString("\n")
+			result.WriteString("M;")
+			for _, v2 := range v {
+				result.WriteString(strconv.Itoa(v2) + ";")
+			}
+			result.WriteString("\n")
+		}
+		result.WriteString("MS;")
+		for _, v := range speeds {
+			result.WriteString(strconv.Itoa(v) + ";")
+		}
+		result.WriteString("\n")
 
 		for _, v := range self.mapa.GetTrees() {
 			result.WriteString(fmt.Sprintf("MT;%d;%d;\n", v[0], v[1]))
@@ -161,6 +161,11 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 	if self.newHit {
 		result.WriteString("HIT;\n")
 	}
+	if self.powerups.show || firstAnswer {
+		for _, p := range self.powerups.powerup {
+			result.WriteString(fmt.Sprintf("POWER;%.0f;%.0f;%d;\n", p.x, p.y, p.typ))
+		}
+	}
 	return result.String()
 }
 
@@ -179,10 +184,11 @@ func (s *Server) ParseMsgFromServerToStruct(msg string, clientId int) bool {
 	var tmpBullets []*Bullet
 	var tmpExplosion []*Position
 	var tmpSmoke []*Position
+	var tmpPowerup []*Powerup
 	tmpTanks := make(map[string]*Client)
 	tmpUserNick := make(map[int]string)
 	tmpScore := make(map[int]int)
-
+	// log.Print(msg)
 	lines := strings.Split(msg, "\n")
 forline:
 	for _, line := range lines {
@@ -298,20 +304,19 @@ forline:
 				continue forline
 			}
 			tmpScore[id] = point
-			
+
 		case "MN":
 			id, err := strconv.Atoi(data[1])
 			if err != nil {
-				log.Println("sdfsdsdas")
 				continue forline
 			}
 			switch id {
-				case 1:
+			case 1:
 				log.Println("got map")
 				gotMap = true
 				s.SetMap(Mapa1, SpeedGround1)
 			}
-			
+
 		case "U":
 			id, err := strconv.Atoi(data[1])
 			if err != nil {
@@ -319,6 +324,21 @@ forline:
 			}
 			s.changesServer = true
 			tmpUserNick[id] = data[2]
+
+		case "POWER":
+			x, err := strconv.ParseFloat(data[1], 32)
+			if err != nil {
+				continue forline
+			}
+			y, err := strconv.ParseFloat(data[2], 32)
+			if err != nil {
+				continue forline
+			}
+			id, err := strconv.Atoi(data[3])
+			if err != nil {
+				continue forline
+			}
+			tmpPowerup = append(tmpPowerup, &Powerup{x: float32(x), y: float32(y), typ: id})
 		}
 	}
 
@@ -335,6 +355,11 @@ forline:
 	if len(tmpScore) > 0 {
 		s.score.client = tmpScore
 		s.score.change = true
+	}
+
+	if len(tmpPowerup) > 0 {
+		s.powerups.powerup = tmpPowerup
+		s.powerups.show = true
 	}
 
 	s.bullets = tmpBullets

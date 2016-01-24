@@ -38,6 +38,7 @@ type Client struct {
 	Fire          bool
 	Smoke         int
 	LastFire      int
+	Powerup       int
 }
 
 func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId string) (*Client, int) {
@@ -70,6 +71,7 @@ func (server *Server) NewClient(remoteAddr *net.UDPAddr, nick string, reqId stri
 		defaultTankSpeed,
 		false,
 		false,
+		0,
 		0,
 		0,
 	}, 0

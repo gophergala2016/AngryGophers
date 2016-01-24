@@ -19,6 +19,7 @@ type Server struct {
 	clients       map[string]*Client
 	bullets       []*Bullet
 	explosion     Explosion
+	powerups      Powerups
 	smoke         Smoke
 	addCh         chan *Client
 	doneCh        chan bool
@@ -33,6 +34,7 @@ type Server struct {
 func NewServer(conn *net.UDPConn) *Server {
 	var bullets []*Bullet
 	explosion := Explosion{}
+	powerups := Powerups{}
 	smoke := Smoke{}
 	clients := make(map[string]*Client)
 	addCh := make(chan *Client)
@@ -51,6 +53,7 @@ func NewServer(conn *net.UDPConn) *Server {
 		clients,
 		bullets,
 		explosion,
+		powerups,
 		smoke,
 		addCh,
 		doneCh,
@@ -61,7 +64,10 @@ func NewServer(conn *net.UDPConn) *Server {
 		false,
 		false,
 	}
-
+	if conn != nil {
+		s.generatePowerup(canvasSizeX, canvasSizeY)
+		log.Print("POWER UP ", s.powerups.powerup)
+	}
 	//	s.mapa.setMap()
 	return s
 }
@@ -91,6 +97,7 @@ func (s *Server) SendAll() {
 	s.scoreRead()
 	s.explosionRead()
 	s.smokeRead()
+	s.powerupRead()
 	s.newBullet = false
 	s.newHit = false
 	s.changesServer = false
@@ -105,6 +112,7 @@ func (s *Server) SendAllClient(cId int, ws *websocket.Conn) {
 	s.scoreRead()
 	s.explosionRead()
 	s.smokeRead()
+	s.powerupRead()
 	s.newBullet = false
 	s.newHit = false
 	s.changesServer = false

@@ -60,6 +60,7 @@ forLoop:
 		if c.Fire {
 			if c.LastFire == 0 {
 				c.LastFire = 20 * int(refreshModifier)
+				s.newBullet = true
 				s.bullets = append(s.bullets,
 					&Bullet{
 						speed:     speed + bulletSpeed,

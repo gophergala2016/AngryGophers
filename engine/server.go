@@ -24,6 +24,7 @@ type Server struct {
 	score         Scores
 	mapa          *Mapa
 	changesServer bool
+	newBullet     bool
 }
 
 func NewServer(conn *net.UDPConn) *Server {
@@ -54,6 +55,7 @@ func NewServer(conn *net.UDPConn) *Server {
 		score,
 		m,
 		true,
+		false,
 	}
 
 	//	s.mapa.setMap()
@@ -81,6 +83,7 @@ func (s *Server) SendAll() {
 	s.scoreRead()
 	s.explosionRead()
 	s.smokeRead()
+	s.newBullet = false
 	s.changesServer = false
 }
 

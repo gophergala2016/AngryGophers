@@ -44,7 +44,6 @@
             if (!keySpacePressed) {
               // pressed.push("fire");
               keySpacePressed = true;
-              soundFire.cloneNode().play();
               // websocketAction("fire");
               websocketAction('fire');
             }
@@ -258,6 +257,9 @@
           data = line.split(';');
           switch (data[0])
           {
+            case 'SHOT':
+              soundFire.cloneNode().play();
+              break;
             case 'T':
               users[data[1]] = {
                 posX: parseFloat(data[3]), 

@@ -138,6 +138,9 @@ func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 				user.GetId(), user.GetNick()))
 		}
 	}
+	if self.newBullet {
+		result.WriteString("SHOT;\n")
+	}
 	return result.String()
 }
 

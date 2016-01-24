@@ -70,9 +70,21 @@ func (s *Server) ParseResponse(idReq string, msg string, remoteaddr *net.UDPAddr
 func (self *Server) BuildAnswer(clientId int, firstAnswer bool) string {
 	var result bytes.Buffer
 	if firstAnswer {
-		name := self.mapa.drawMap()
+		x, speeds, name := self.mapa.drawMap()
 		result.WriteString("MN;" + name + ";\n")
 
+		for _, v := range x {
+ 			result.WriteString("M;")
+ 			for _, v2 := range v {
+ 				result.WriteString(strconv.Itoa(v2) + ";")
+ 			}
+ 			result.WriteString("\n")
+ 		}
+ 		result.WriteString("MS;")
+ 		for _, v := range speeds {
+ 			result.WriteString(strconv.Itoa(v) + ";")
+  		}
+  		result.WriteString("\n")
 
 		for _, v := range self.mapa.GetTrees() {
 			result.WriteString(fmt.Sprintf("MT;%d;%d;\n", v[0], v[1]))

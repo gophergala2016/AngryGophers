@@ -12,6 +12,15 @@ No one in our team has any experience in game development, but we decided that t
 
 Just compile and run client script that is located in client folder. The server is running online on our side all the time so you can just join it.
 
+## Running your server instance
+
+If you would like to run your own server instance, simply compile it and run.
+You would have to change host address in `client/main.go` for proper player connection.
+
+``` go
+ServerAddr, err := net.ResolveUDPAddr("udp", "40.76.43.250:8081")
+```
+
 ## Rules
 
 Every player gets his own tank to drive and conquer.
@@ -30,9 +39,9 @@ Players can also release the dust cloud to hide their canny intenstions.
 
 ## Key bindings
 
-* movement          - arrows
-* fire               - space
-* release dust cloud - ctrl
+* <kbd>up</kbd> <kbd>down</kbd> <kbd>left</kbd> <kbd>right</kbd> - movement
+* <kbd>space</kbd> - fire
+* <kbd>ctrl</kbd> - release dust cloud
 
 ## Screenshots
 

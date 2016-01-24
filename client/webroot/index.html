@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <title>AngryGophers TANK</title>
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
-          type="text/javascript"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
 
   <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Creepster' rel='stylesheet' type='text/css'>
@@ -36,10 +35,11 @@
         <div id="respawnCountdown" class="info count">3</div>
         <button id="respawn">Click here to respawn!</button>
       </div>
-      <canvas id="canvas" style="display:none;" class="windowResolution" width="800" height="800">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
+      <canvas id="canvas" style="display: none;" class="windowResolution" width="800" height="800">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
     </div>
 
-    <div id="score" style="float:left;font-size:25px;text-align:center;width:300px;display:none;"></div>
+    <div id="score" style="float: left; font-size: 25px; text-align: center; width: 300px; display: none;"></div>
+    <div id="scoreNew" style="display: none;"></div>
 
     <style>
     body, html {
@@ -312,7 +312,7 @@
     var bulletList = ["bulletBeige.png"];
   
     var envPath = "./resources/Environment/";
-    var envGroundList = ["dirt.png", "sand.png", "grass.png", "waterShallow.png", "waterDeep.png"];
+    var envGroundList = ["dirt.png", "sand.png", "grass.png", "ice.png", "water.png", "dirt-grass.png", "sand-grass.png"];
     var envObstacleList = ["treeLarge.png", "treeSmall.png"];
     var envMap = [];
 
@@ -356,27 +356,60 @@
         for (k in datalist) {
           parseLine(datalist[k]);
         }
+
         draw();
-        
+
         if (scores.length > 0)
         {
           score = document.getElementById("score");
-          var str = '<table><tr><td colspan="3">TOP scores</td></tr>';
-          str += '<tr><td>Nick</td><td>Score</td><td>HP</td></tr>';
-          for(k in scores)
+          var scoreStr = '<table id="scoreList">';
+          var sortedScores = [];
+
+          for (k in scores) {
+            console.log(scores[k]);
+            if (sortedScores.length == 0) {
+               sortedScores.push(scores[k]);
+            } else {
+              var tmpScores = [];
+              var inserted = false;
+              for (i in sortedScores) {
+                if (parseInt(scores[k].point) > parseInt(sortedScores[i].point) && inserted === false) {
+                  tmpScores.push(scores[k]);
+                  inserted = true;
+                }
+                tmpScores.push(sortedScores[i]);
+              }
+              if (inserted === false) {
+                tmpScores.push(scores[k]);
+              }
+              sortedScores = tmpScores;
+            }
+          }
+          scores = sortedScores;
+
+          scoreStr += '<thead>';
+          scoreStr += '<tr><th>Name</th><th>Score</th><th>Health</th></tr>'
+          scoreStr += '</thead>';
+          scoreStr += '<tbody>';
+
+          for (k in scores)
           {
             hpInfo = "";
             if (typeof users[scores[k].user] != 'undefined')
             {
               hpInfo = users[scores[k].user].hp;
             }
-            str += "<tr><td style='width:100px;'>" + userNames[scores[k].user] + "</td>";
-            str += "<td style='width:100px;'>" + scores[k].point +"</td>";
-            str += "<td class='hp_"+scores[k].user+"' style='width:100px;'>" + hpInfo + "</td></tr>";
+            scoreStr += '<tr id="player-score-' + scores[k].user + '" data-id="' + scores[k].point + '">';
+            scoreStr += '<td style="width: 400px; text-align: left;">' + userNames[scores[k].user] + '</td>';
+            scoreStr += '<td style="width: 200px; text-align: center;">' + scores[k].point + '</td>';
+            scoreStr += '<td style="width: 200px; text-align: center;">' + hpInfo + '</td>';
+            scoreStr += '</tr>';
           }
 
-          console.log(users);
-          score.innerHTML = str+"</table>";
+          scoreStr += '</tbody>';
+          scoreStr += '</table>';
+
+          score.innerHTML = scoreStr;          
         }
       };
 
@@ -749,7 +782,7 @@
       ctx.strokeStyle = "black";
   
       rect(0, 0, WIDTH, HEIGHT, true);
-    drawGround();
+      drawGround();
       
       for (k in bullets){
         drawObject("bullet", bullets[k].posX, bullets[k].posY, bulletWidth, bulletHeight, "b", bullets[k].direction);
